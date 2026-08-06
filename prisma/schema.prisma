@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  fullName     String   @map("full_name")
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  /// Mirrors the legacy JWT `permissions[0]` shape, e.g. { customers_create, customers_edit, customers_delete }
+  permissions  Json     @default("{}")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  ownedCompanies Company[] @relation("CompanyOwner")
+
+  @@map("users")
+}
+
+model Company {
+  id           String   @id @default(uuid()) @db.Uuid
+  displayName  String   @map("display_name")
+  legalName    String   @map("legal_name")
+  taxId        String   @unique @map("tax_id")
+  foreignValue Boolean  @default(false) @map("foreign_value")
+  phone        String   @unique
+  website      String?
+  address1     String?
+  number       String?
+  address2     String?
+  city         String?
+  state        String?
+  country      String?
+  postalCode   String?  @map("postal_code")
+  /// Entity types this company record represents, e.g. ["Customer"]
+  companyType  Json     @map("company_type")
+  ownerId      String?  @db.Uuid @map("owner_id")
+  owner        User?    @relation("CompanyOwner", fields: [ownerId], references: [id])
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  customerProfile CustomerProfile?
+
+  @@map("companies")
+}
+
+model CustomerProfile {
+  id               String   @id @default(uuid()) @db.Uuid
+  customerId       String   @unique @db.Uuid @map("customer_id")
+  company          Company  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  segment          String?
+  size             String?
+  status           String?
+  source           String?
+  sourceSpecify    String?  @map("source_specify")
+  accountPotential String?  @map("account_potential")
+  estimatedVolume  Int?     @map("estimated_volume")
+  volumeUnit       String?  @map("volume_unit")
+  currency         String?
+  incoterms        String?
+  mainRoutes       String?  @map("main_routes")
+  cargoType        String?  @map("cargo_type")
+  restrictions     String?
+  notes            String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("customer_profiles")
+}

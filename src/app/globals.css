@@ -1,26 +1,56 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4f6fa;
+  --foreground: #1b2436;
+
+  --navy-950: #101a30;
+  --navy-900: #17233d;
+  --navy-800: #1e2c47;
+  --navy-700: #2a3b5c;
+  --navy-500: #47597a;
+  --navy-100: #e7ebf2;
+
+  --status-lead: #2f6fed;
+  --status-prospecto: #a35de0;
+  --status-ativo: #1fa971;
+  --status-inativo: #7a8699;
+  --status-perdido: #e0473f;
+  --status-incompleto: #b1b1b1;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-navy-950: var(--navy-950);
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-navy-700: var(--navy-700);
+  --color-navy-500: var(--navy-500);
+  --color-navy-100: var(--navy-100);
+
+  --color-status-lead: var(--status-lead);
+  --color-status-prospecto: var(--status-prospecto);
+  --color-status-ativo: var(--status-ativo);
+  --color-status-inativo: var(--status-inativo);
+  --color-status-perdido: var(--status-perdido);
+  --color-status-incompleto: var(--status-incompleto);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
