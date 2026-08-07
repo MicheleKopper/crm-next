@@ -24,6 +24,15 @@ export type CustomerListRow = {
   accountPotential: string | null;
   cargoType: string | null;
   ownerFullName: string;
+  createdAt: Date;
+};
+
+const SORT_COLUMNS: Record<ListCustomersQuery["sortBy"], Prisma.Sql> = {
+  displayName: Prisma.sql`c."display_name"`,
+  createdAt: Prisma.sql`c."created_at"`,
+  status: Prisma.sql`cp."status"`,
+  ownerFullName: Prisma.sql`u."full_name"`,
+  country: Prisma.sql`c."country"`,
 };
 
 /**
@@ -54,6 +63,8 @@ export async function listCustomers(
     conditions.push(Prisma.sql`c."owner_id" = ${query.ownerId}::uuid`);
 
   const where = Prisma.join(conditions, " AND ");
+  const sortColumn = SORT_COLUMNS[query.sortBy];
+  const sortDirection = query.sortDir === "desc" ? Prisma.sql`DESC` : Prisma.sql`ASC`;
 
   const rows = await prisma.$queryRaw<(CustomerListRow & { totalCount: bigint })[]>(
     Prisma.sql`
@@ -69,12 +80,13 @@ export async function listCustomers(
         cp."account_potential" AS "accountPotential",
         cp."cargo_type" AS "cargoType",
         COALESCE(u."full_name", '') AS "ownerFullName",
+        c."created_at" AS "createdAt",
         COUNT(*) OVER() AS "totalCount"
       FROM "companies" c
       LEFT JOIN "customer_profiles" cp ON cp."customer_id" = c."id"
       LEFT JOIN "users" u ON u."id" = c."owner_id"
       WHERE ${where}
-      ORDER BY c."display_name" ASC
+      ORDER BY ${sortColumn} ${sortDirection} NULLS LAST, c."display_name" ASC
       LIMIT ${query.limit}
       OFFSET ${query.offset}
     `

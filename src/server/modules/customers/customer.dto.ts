@@ -22,6 +22,14 @@ export const ACCOUNT_POTENTIALS = ["Baixo", "Médio", "Alto", "Estratégico"] as
 
 export const CARGO_TYPES = ["Flexitank", "Isotank", "General Cargo"] as const;
 
+export const CUSTOMER_SORT_FIELDS = [
+  "displayName",
+  "createdAt",
+  "status",
+  "ownerFullName",
+  "country",
+] as const;
+
 export const listCustomersQuerySchema = z.object({
   search: z.string().trim().optional(),
   limit: z.coerce.number().int().min(1).max(100).default(10),
@@ -31,6 +39,8 @@ export const listCustomersQuerySchema = z.object({
   status: z.string().optional(),
   accountPotential: z.string().optional(),
   ownerId: z.string().uuid().optional(),
+  sortBy: z.enum(CUSTOMER_SORT_FIELDS).default("displayName"),
+  sortDir: z.enum(["asc", "desc"]).default("asc"),
 });
 export type ListCustomersQuery = z.infer<typeof listCustomersQuerySchema>;
 

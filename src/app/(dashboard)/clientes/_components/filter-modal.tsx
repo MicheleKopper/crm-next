@@ -54,17 +54,28 @@ export function FilterModal({
 
   return (
     <>
-      <Button variant="secondary" onClick={() => setOpen(true)}>
-        <Filter size={16} />
-        Filtrar
+      <div className="relative">
+        <Button
+          variant="secondary"
+          onClick={() => setOpen(true)}
+          aria-label="Filtrar clientes"
+          title="Filtrar"
+          className="h-9 w-9 p-0"
+        >
+          <Filter size={16} />
+        </Button>
         {activeFilterCount > 0 && (
-          <span className="ml-1 rounded-full bg-navy-900 px-1.5 py-0.5 text-xs text-white">
+          <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-navy-900 text-[10px] font-semibold text-white">
             {activeFilterCount}
           </span>
         )}
-      </Button>
+      </div>
       {activeFilterCount > 0 && (
-        <Button variant="ghost" onClick={clearFilters}>
+        <Button
+          variant="ghost"
+          onClick={clearFilters}
+          className="h-9 px-2 text-xs"
+        >
           Limpar
         </Button>
       )}

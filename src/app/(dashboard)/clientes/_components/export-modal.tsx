@@ -52,9 +52,14 @@ export function ExportModal() {
 
   return (
     <>
-      <Button variant="secondary" onClick={() => setOpen(true)}>
+      <Button
+        variant="secondary"
+        onClick={() => setOpen(true)}
+        aria-label="Exportar clientes"
+        title="Exportar"
+        className="h-9 w-9 p-0"
+      >
         <FileDown size={16} />
-        Exportar
       </Button>
 
       <Modal open={open} onClose={() => setOpen(false)} title="Exportar clientes">

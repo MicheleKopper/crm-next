@@ -1,6 +1,19 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  MapPin,
+  NotebookPen,
+  Package,
+  Phone,
+  Route,
+  Tag,
+  UserCircle,
+  UserPlus,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { type FieldPath, useForm } from "react-hook-form";
@@ -11,6 +24,7 @@ import { Drawer } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import {
@@ -42,6 +56,8 @@ const STEP_FIELDS: FieldPath<CreateCustomerFormInput>[][] = [
   ],
   [],
 ];
+
+const FORM_ID = "create-customer-form";
 
 export function CreateCustomerDrawer({
   owners,
@@ -101,84 +117,135 @@ export function CreateCustomerDrawer({
     router.refresh();
   }
 
+  const isLastStep = step === STEPS.length - 1;
+
   return (
     <>
-      <Button onClick={() => setOpen(true)}>+ Add Novo</Button>
+      <Button className="h-9" onClick={() => setOpen(true)}>
+        + Novo
+      </Button>
 
-      <Drawer open={open} onClose={closeAndReset} title="Adicionar Cliente">
-        <div className="flex gap-6">
-          <ul className="w-40 flex-shrink-0 space-y-3 text-sm">
-            {STEPS.map((label, index) => (
-              <li
-                key={label}
-                className={cn(
-                  "font-medium text-navy-500/50",
-                  index === step && "text-navy-900",
-                  index < step && "text-navy-500"
-                )}
+      <Drawer
+        open={open}
+        onClose={closeAndReset}
+        title="Adicionar Cliente"
+        subtitle="Cadastre um novo cliente no CRM"
+        icon={<UserPlus size={20} />}
+        widthClassName="max-w-2xl"
+        headerExtra={<Stepper steps={STEPS} current={step} />}
+        footer={
+          <div className="flex items-center justify-between">
+            {step > 0 ? (
+              <Button
+                key="back"
+                type="button"
+                variant="secondary"
+                onClick={() => setStep((current) => current - 1)}
               >
-                {label}
-              </li>
-            ))}
-          </ul>
+                <ArrowLeft size={16} />
+                Anterior
+              </Button>
+            ) : (
+              <Button
+                key="cancel"
+                type="button"
+                variant="ghost"
+                onClick={closeAndReset}
+              >
+                Cancelar
+              </Button>
+            )}
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex-1 space-y-4"
-          >
-            {step === 0 && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <input
-                    id="isForeignCompany"
-                    type="checkbox"
-                    {...register("isForeignCompany")}
-                    className="h-4 w-4 rounded border-navy-100"
-                  />
-                  <Label htmlFor="isForeignCompany" className="mb-0">
-                    Empresa Estrangeira
-                  </Label>
-                </div>
+            {!isLastStep ? (
+              <Button key="next" type="button" onClick={goNext}>
+                Próximo
+                <ArrowRight size={16} />
+              </Button>
+            ) : (
+              <Button
+                key="submit"
+                type="submit"
+                form={FORM_ID}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Adicionando..." : "Adicionar Cliente"}
+              </Button>
+            )}
+          </div>
+        }
+      >
+        <form id={FORM_ID} onSubmit={handleSubmit(onSubmit)}>
+          {step === 0 && (
+            <div className="space-y-6">
+              <Section icon={UserCircle} title="Dados da empresa">
+                <Switch
+                  id="isForeignCompany"
+                  label="Empresa estrangeira"
+                  description="Ative se o cliente não é registrado no Brasil"
+                  {...register("isForeignCompany")}
+                />
 
-                <div>
-                  <Label htmlFor="country">País</Label>
+                <Field
+                  htmlFor="country"
+                  label="País"
+                  required
+                  error={errors.country?.message}
+                >
                   <Input id="country" {...register("country")} />
-                  <FieldError message={errors.country?.message} />
+                </Field>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field
+                    htmlFor="legalName"
+                    label="Razão Social"
+                    required
+                    error={errors.legalName?.message}
+                  >
+                    <Input id="legalName" {...register("legalName")} />
+                  </Field>
+                  <Field
+                    htmlFor="displayName"
+                    label="Nome Fantasia"
+                    required
+                    error={errors.displayName?.message}
+                  >
+                    <Input id="displayName" {...register("displayName")} />
+                  </Field>
                 </div>
 
-                <div>
-                  <Label htmlFor="legalName">Razão Social</Label>
-                  <Input id="legalName" {...register("legalName")} />
-                  <FieldError message={errors.legalName?.message} />
-                </div>
-
-                <div>
-                  <Label htmlFor="displayName">Nome</Label>
-                  <Input id="displayName" {...register("displayName")} />
-                  <FieldError message={errors.displayName?.message} />
-                </div>
-
-                <div>
-                  <Label htmlFor="taxId">
-                    {isForeignCompany ? "Tax ID" : "CNPJ"}
-                  </Label>
+                <Field
+                  htmlFor="taxId"
+                  label={isForeignCompany ? "Tax ID" : "CNPJ"}
+                  required
+                  error={errors.taxId?.message}
+                >
                   <Input id="taxId" {...register("taxId")} />
-                  <FieldError message={errors.taxId?.message} />
-                </div>
+                </Field>
+              </Section>
 
-                <div>
-                  <Label htmlFor="phone">Telefone</Label>
-                  <Input id="phone" {...register("phone")} />
-                  <FieldError message={errors.phone?.message} />
+              <Section icon={Phone} title="Contato">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field
+                    htmlFor="phone"
+                    label="Telefone"
+                    required
+                    error={errors.phone?.message}
+                  >
+                    <Input id="phone" {...register("phone")} />
+                  </Field>
+                  <Field htmlFor="website" label="Website">
+                    <Input id="website" {...register("website")} />
+                  </Field>
                 </div>
+              </Section>
 
-                <div>
-                  <Label htmlFor="website">Website</Label>
-                  <Input id="website" {...register("website")} />
-                </div>
-
-                <div>
-                  <Label htmlFor="ownerId">Responsável</Label>
+              <Section icon={UserCircle} title="Responsável">
+                <Field
+                  htmlFor="ownerId"
+                  label="Responsável"
+                  required
+                  error={errors.ownerId?.message}
+                >
                   <Select id="ownerId" {...register("ownerId")}>
                     <option value="">Selecione</option>
                     {owners.map((owner) => (
@@ -187,267 +254,384 @@ export function CreateCustomerDrawer({
                       </option>
                     ))}
                   </Select>
-                  <FieldError message={errors.ownerId?.message} />
-                </div>
-              </div>
-            )}
+                </Field>
+              </Section>
+            </div>
+          )}
 
-            {step === 1 && (
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="postalCode">
-                    {isForeignCompany ? "Código Postal" : "CEP"}
-                  </Label>
-                  <Input id="postalCode" {...register("postalCode")} />
-                  <FieldError message={errors.postalCode?.message} />
-                </div>
-
-                <div>
-                  <Label htmlFor="state">
-                    {isForeignCompany ? "State / Province" : "Estado"}
-                  </Label>
-                  <Input id="state" {...register("state")} />
-                  <FieldError message={errors.state?.message} />
-                </div>
-
-                <div>
-                  <Label htmlFor="city">Cidade</Label>
-                  <Input id="city" {...register("city")} />
-                  <FieldError message={errors.city?.message} />
+          {step === 1 && (
+            <div className="space-y-6">
+              <Section icon={MapPin} title="Endereço">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field
+                    htmlFor="postalCode"
+                    label={isForeignCompany ? "Código Postal" : "CEP"}
+                    required
+                    error={errors.postalCode?.message}
+                  >
+                    <Input id="postalCode" {...register("postalCode")} />
+                  </Field>
+                  <Field
+                    htmlFor="state"
+                    label={isForeignCompany ? "State / Province" : "Estado"}
+                    required
+                    error={errors.state?.message}
+                  >
+                    <Input id="state" {...register("state")} />
+                  </Field>
                 </div>
 
-                <div>
-                  <Label htmlFor="address">Endereço</Label>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field
+                    htmlFor="city"
+                    label="Cidade"
+                    required
+                    error={errors.city?.message}
+                  >
+                    <Input id="city" {...register("city")} />
+                  </Field>
+                  <Field
+                    htmlFor="number"
+                    label="Número"
+                    required
+                    error={errors.number?.message}
+                  >
+                    <Input id="number" {...register("number")} />
+                  </Field>
+                </div>
+
+                <Field
+                  htmlFor="address"
+                  label="Endereço"
+                  required
+                  error={errors.address?.message}
+                >
                   <Input id="address" {...register("address")} />
-                  <FieldError message={errors.address?.message} />
-                </div>
+                </Field>
 
-                <div>
-                  <Label htmlFor="number">Número</Label>
-                  <Input id="number" {...register("number")} />
-                  <FieldError message={errors.number?.message} />
-                </div>
-
-                <div>
-                  <Label htmlFor="complement">Complemento</Label>
+                <Field htmlFor="complement" label="Complemento">
                   <Input id="complement" {...register("complement")} />
-                </div>
-              </div>
-            )}
+                </Field>
+              </Section>
+            </div>
+          )}
 
-            {step === 2 && (
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="source">Origem</Label>
-                  <Select id="source" {...register("source")}>
-                    <option value="">Selecione</option>
-                    <option value="Indicação">Indicação</option>
-                    <option value="Evento">Evento</option>
-                    <option value="Online">Online</option>
-                    <option value="Outros">Outros</option>
-                  </Select>
-                  <FieldError message={errors.source?.message} />
+          {step === 2 && (
+            <div className="space-y-6">
+              <Section icon={Route} title="Origem">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field
+                    htmlFor="source"
+                    label="Origem"
+                    required
+                    error={errors.source?.message}
+                  >
+                    <Select id="source" {...register("source")}>
+                      <option value="">Selecione</option>
+                      <option value="Indicação">Indicação</option>
+                      <option value="Evento">Evento</option>
+                      <option value="Online">Online</option>
+                      <option value="Outros">Outros</option>
+                    </Select>
+                  </Field>
+                  <Field
+                    htmlFor="sourceSpecify"
+                    label="Especifique a Origem"
+                    required
+                    error={errors.sourceSpecify?.message}
+                  >
+                    <Input id="sourceSpecify" {...register("sourceSpecify")} />
+                  </Field>
                 </div>
+              </Section>
 
-                <div>
-                  <Label htmlFor="sourceSpecify">Especifique a Origem</Label>
-                  <Input id="sourceSpecify" {...register("sourceSpecify")} />
-                  <FieldError message={errors.sourceSpecify?.message} />
-                </div>
-
-                <div>
-                  <Label htmlFor="status">Status</Label>
-                  <Select id="status" {...register("status")}>
-                    <option value="">Selecione</option>
-                    {CUSTOMER_STATUSES.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                  <FieldError message={errors.status?.message} />
-                </div>
-
-                <div>
-                  <Label htmlFor="segment">Segmento</Label>
-                  <Select id="segment" {...register("segment")}>
-                    <option value="">Selecione</option>
-                    {CUSTOMER_SEGMENTS.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                  <FieldError message={errors.segment?.message} />
-                </div>
-
-                <div>
-                  <Label htmlFor="size">Porte</Label>
-                  <Select id="size" {...register("size")}>
-                    <option value="">Selecione</option>
-                    {CUSTOMER_SIZES.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                  <FieldError message={errors.size?.message} />
-                </div>
-
-                <div>
-                  <Label htmlFor="accountPotential">Potencial da Conta</Label>
-                  <Select id="accountPotential" {...register("accountPotential")}>
-                    <option value="">Selecione</option>
-                    {ACCOUNT_POTENTIALS.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                  <FieldError message={errors.accountPotential?.message} />
+              <Section icon={Tag} title="Classificação">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field
+                    htmlFor="status"
+                    label="Status"
+                    required
+                    error={errors.status?.message}
+                  >
+                    <Select id="status" {...register("status")}>
+                      <option value="">Selecione</option>
+                      {CUSTOMER_STATUSES.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
+                  <Field
+                    htmlFor="segment"
+                    label="Segmento"
+                    required
+                    error={errors.segment?.message}
+                  >
+                    <Select id="segment" {...register("segment")}>
+                      <option value="">Selecione</option>
+                      {CUSTOMER_SEGMENTS.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
                 </div>
 
-                <div>
-                  <Label htmlFor="cargoType">Tipo de Carga</Label>
-                  <Select id="cargoType" {...register("cargoType")}>
-                    <option value="">Selecione</option>
-                    {CARGO_TYPES.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                  <FieldError message={errors.cargoType?.message} />
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field
+                    htmlFor="size"
+                    label="Porte"
+                    required
+                    error={errors.size?.message}
+                  >
+                    <Select id="size" {...register("size")}>
+                      <option value="">Selecione</option>
+                      {CUSTOMER_SIZES.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
+                  <Field
+                    htmlFor="accountPotential"
+                    label="Potencial da Conta"
+                    required
+                    error={errors.accountPotential?.message}
+                  >
+                    <Select
+                      id="accountPotential"
+                      {...register("accountPotential")}
+                    >
+                      <option value="">Selecione</option>
+                      {ACCOUNT_POTENTIALS.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
                 </div>
 
-                <div>
-                  <Label htmlFor="incoterms">Incoterms</Label>
-                  <Select id="incoterms" {...register("incoterms")}>
-                    <option value="">Selecione</option>
-                    {[
-                      "EXW",
-                      "FCA",
-                      "FAS",
-                      "FOB",
-                      "CPT",
-                      "CIP",
-                      "CFR",
-                      "CIF",
-                      "DAP",
-                      "DPU",
-                      "DDP",
-                    ].map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field
+                    htmlFor="cargoType"
+                    label="Tipo de Carga"
+                    required
+                    error={errors.cargoType?.message}
+                  >
+                    <Select id="cargoType" {...register("cargoType")}>
+                      <option value="">Selecione</option>
+                      {CARGO_TYPES.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
+                  <Field htmlFor="incoterms" label="Incoterms">
+                    <Select id="incoterms" {...register("incoterms")}>
+                      <option value="">Selecione</option>
+                      {[
+                        "EXW",
+                        "FCA",
+                        "FAS",
+                        "FOB",
+                        "CPT",
+                        "CIP",
+                        "CFR",
+                        "CIF",
+                        "DAP",
+                        "DPU",
+                        "DDP",
+                      ].map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
                 </div>
+              </Section>
 
-                <div>
-                  <Label htmlFor="estimatedVolume">Volume Estimado</Label>
-                  <Input
-                    id="estimatedVolume"
-                    type="number"
-                    min={1}
-                    {...register("estimatedVolume")}
-                  />
-                  <FieldError message={errors.estimatedVolume?.message} />
+              <Section icon={Package} title="Volume estimado">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  <Field
+                    htmlFor="estimatedVolume"
+                    label="Volume Estimado"
+                    required
+                    error={errors.estimatedVolume?.message}
+                  >
+                    <Input
+                      id="estimatedVolume"
+                      type="number"
+                      min={1}
+                      {...register("estimatedVolume")}
+                    />
+                  </Field>
+                  <Field
+                    htmlFor="volumeUnit"
+                    label="Unidade"
+                    required
+                    error={errors.volumeUnit?.message}
+                  >
+                    <Select id="volumeUnit" {...register("volumeUnit")}>
+                      <option value="">Selecione</option>
+                      {[
+                        "Container",
+                        "Bill of Lading",
+                        "TEU",
+                        "kg",
+                        "Cubic Meter (CBM)",
+                        "Metric Ton",
+                        "CBM/Ton",
+                      ].map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
+                  <Field htmlFor="currency" label="Moeda">
+                    <Select id="currency" {...register("currency")}>
+                      <option value="">Selecione</option>
+                      <option value="BRL">BRL</option>
+                      <option value="USD">USD</option>
+                      <option value="EUR">EUR</option>
+                    </Select>
+                  </Field>
                 </div>
+              </Section>
+            </div>
+          )}
 
-                <div>
-                  <Label htmlFor="volumeUnit">Unidade</Label>
-                  <Select id="volumeUnit" {...register("volumeUnit")}>
-                    <option value="">Selecione</option>
-                    {[
-                      "Container",
-                      "Bill of Lading",
-                      "TEU",
-                      "kg",
-                      "Cubic Meter (CBM)",
-                      "Metric Ton",
-                      "CBM/Ton",
-                    ].map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                  <FieldError message={errors.volumeUnit?.message} />
-                </div>
-
-                <div>
-                  <Label htmlFor="currency">Moeda</Label>
-                  <Select id="currency" {...register("currency")}>
-                    <option value="">Selecione</option>
-                    <option value="BRL">BRL</option>
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
-                  </Select>
-                </div>
-              </div>
-            )}
-
-            {step === 3 && (
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="mainRoutes">Rotas Principais</Label>
+          {step === 3 && (
+            <div className="space-y-6">
+              <Section icon={Route} title="Detalhes operacionais">
+                <Field htmlFor="mainRoutes" label="Rotas Principais">
                   <Input
                     id="mainRoutes"
                     placeholder="Ex: SHA-ITJ, MIA-GRU"
                     {...register("mainRoutes")}
                   />
-                </div>
+                </Field>
+                <Field htmlFor="restrictions" label="Restrições Operacionais">
+                  <Textarea id="restrictions" rows={3} {...register("restrictions")} />
+                </Field>
+              </Section>
 
-                <div>
-                  <Label htmlFor="restrictions">Restrições Operacionais</Label>
+              <Section icon={NotebookPen} title="Notas">
+                <Field htmlFor="notes" label="Observações">
                   <Textarea
-                    id="restrictions"
-                    rows={3}
-                    {...register("restrictions")}
+                    id="notes"
+                    rows={4}
+                    placeholder="Adicione observações sobre o cliente (opcional)"
+                    {...register("notes")}
                   />
-                </div>
-
-                <div>
-                  <Label htmlFor="notes">Observações</Label>
-                  <Textarea id="notes" rows={4} {...register("notes")} />
-                </div>
-              </div>
-            )}
-
-            <div className="flex items-center justify-between pt-4">
-              {step > 0 ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setStep((current) => current - 1)}
-                >
-                  Anterior
-                </Button>
-              ) : (
-                <Button type="button" variant="ghost" onClick={closeAndReset}>
-                  Cancelar
-                </Button>
-              )}
-
-              {step < STEPS.length - 1 ? (
-                <Button type="button" onClick={goNext}>
-                  Próximo
-                </Button>
-              ) : (
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Adicionando..." : "Adicionar"}
-                </Button>
-              )}
+                </Field>
+              </Section>
             </div>
-          </form>
-        </div>
+          )}
+        </form>
       </Drawer>
     </>
   );
 }
 
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null;
-  return <p className="mt-1 text-xs text-status-perdido">{message}</p>;
+function Stepper({ steps, current }: { steps: string[]; current: number }) {
+  return (
+    <div className="border-b border-navy-100 bg-navy-100/20 px-6 py-4">
+      <ol className="flex items-center">
+        {steps.map((label, index) => {
+          const isDone = index < current;
+          const isActive = index === current;
+          return (
+            <li
+              key={label}
+              className={cn(
+                "flex items-center",
+                index < steps.length - 1 && "flex-1"
+              )}
+            >
+              <div className="flex flex-col items-center gap-1.5">
+                <div
+                  className={cn(
+                    "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors",
+                    (isDone || isActive) && "bg-navy-900 text-white",
+                    isActive && "ring-4 ring-navy-900/15",
+                    !isDone && !isActive && "border border-navy-200 bg-white text-navy-400"
+                  )}
+                >
+                  {isDone ? <Check size={14} /> : index + 1}
+                </div>
+                <span
+                  className={cn(
+                    "whitespace-nowrap text-xs font-medium",
+                    isActive ? "text-navy-900" : "text-navy-400"
+                  )}
+                >
+                  {label}
+                </span>
+              </div>
+              {index < steps.length - 1 && (
+                <div
+                  className={cn(
+                    "mx-2 h-px flex-1 translate-y-[-10px]",
+                    isDone ? "bg-navy-900" : "bg-navy-200"
+                  )}
+                />
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
+function Section({
+  icon: Icon,
+  title,
+  children,
+}: {
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 text-sm font-semibold text-navy-900">
+        <Icon size={15} className="text-navy-500" />
+        {title}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Field({
+  htmlFor,
+  label,
+  required,
+  error,
+  children,
+}: {
+  htmlFor: string;
+  label: string;
+  required?: boolean;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <Label htmlFor={htmlFor}>
+        {label}
+        {required && <span className="ml-0.5 text-status-perdido">*</span>}
+      </Label>
+      {children}
+      {error && <p className="mt-1 text-xs text-status-perdido">{error}</p>}
+    </div>
+  );
 }

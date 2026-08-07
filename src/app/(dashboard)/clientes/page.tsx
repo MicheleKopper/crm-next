@@ -6,10 +6,13 @@ import { listCustomersQuerySchema } from "@/server/modules/customers/customer.dt
 import { getCustomerList } from "@/server/modules/customers/customer.service";
 
 import { CreateCustomerDrawer } from "./_components/create-customer-drawer";
-import { CustomerRow } from "./_components/customer-row";
+import { CustomerListBody } from "./_components/customer-list-body";
 import { ExportModal } from "./_components/export-modal";
 import { FilterModal } from "./_components/filter-modal";
 import { SearchBar } from "./_components/search-bar";
+import { SortMenu } from "./_components/sort-menu";
+import { ViewModeProvider } from "./_components/view-mode-context";
+import { ViewToggle } from "./_components/view-toggle";
 
 export default async function CustomersPage({
   searchParams,
@@ -23,57 +26,44 @@ export default async function CustomersPage({
   ]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-navy-900">Clientes</h1>
-          <p className="text-sm text-navy-500">
-            <Link href="/clientes" className="hover:underline">
-              Home
-            </Link>{" "}
-            &gt; Clientes
-          </p>
-        </div>
-        <CreateCustomerDrawer owners={owners} currentUserId={session!.sub} />
-      </div>
-
-      <div className="rounded-xl bg-white p-6 shadow-sm">
+    <ViewModeProvider>
+      <div className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <h2 className="text-base font-bold text-navy-900">
-            Todas informações
-          </h2>
-          <div className="flex flex-1 items-center justify-end gap-2">
-            <div className="w-full max-w-md">
-              <SearchBar />
-            </div>
+          <div>
+            <h1 className="text-2xl font-bold text-navy-900">Clientes</h1>
+            <p className="text-sm text-navy-500">
+              <Link href="/clientes" className="hover:underline">
+                Home
+              </Link>{" "}
+              &gt; Clientes
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <SearchBar />
+            <SortMenu />
             <FilterModal owners={owners} />
             <ExportModal />
+            <ViewToggle />
+            <CreateCustomerDrawer owners={owners} currentUserId={session!.sub} />
           </div>
         </div>
 
-        <div className="mt-4">
-          {items.length === 0 ? (
-            <p className="py-12 text-center text-navy-500">
-              Nenhum cliente cadastrado.
-            </p>
-          ) : (
-            items.map((customer) => (
-              <CustomerRow key={customer.uid} customer={customer} />
-            ))
+        <div className="rounded-xl bg-white p-6 shadow-sm">
+          <CustomerListBody items={items} />
+
+          {items.length > 0 && !query.search && (
+            <div className="mt-4">
+              <Pagination
+                limit={query.limit}
+                offset={query.offset}
+                currentCount={items.length}
+                totalCount={totalCount}
+              />
+            </div>
           )}
         </div>
-
-        {items.length > 0 && !query.search && (
-          <div className="mt-4">
-            <Pagination
-              limit={query.limit}
-              offset={query.offset}
-              currentCount={items.length}
-              totalCount={totalCount}
-            />
-          </div>
-        )}
       </div>
-    </div>
+    </ViewModeProvider>
   );
 }
