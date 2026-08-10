@@ -13,7 +13,7 @@ export function toCustomerDetail(company: CompanyWithProfile) {
     legalName: company.legalName,
     taxId: company.taxId,
     isForeignCompany: company.foreignValue,
-    phone: company.phone,
+    phone: company.phone ?? "",
     website: company.website,
     address: company.address1,
     number: company.number,

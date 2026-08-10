@@ -6,7 +6,15 @@ import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
-export function SearchBar() {
+export function SearchBar({
+  basePath,
+  placeholder,
+  ariaLabel,
+}: {
+  basePath: string;
+  placeholder: string;
+  ariaLabel: string;
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialValue = searchParams.get("search") ?? "";
@@ -23,7 +31,7 @@ export function SearchBar() {
         params.delete("search");
       }
       params.set("offset", "0");
-      router.push(`/clientes?${params.toString()}`);
+      router.push(`${basePath}?${params.toString()}`);
     }, 300);
 
     return () => clearTimeout(timeout);
@@ -59,7 +67,7 @@ export function SearchBar() {
       <button
         type="button"
         onClick={handleExpand}
-        aria-label="Buscar clientes"
+        aria-label={ariaLabel}
         title="Buscar"
         className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-navy-500 hover:bg-navy-100 hover:text-navy-900"
       >
@@ -71,8 +79,8 @@ export function SearchBar() {
         onChange={(event) => setValue(event.target.value)}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        placeholder="Busque por nome ou país…"
-        aria-label="Busque por nome ou país"
+        placeholder={placeholder}
+        aria-label={placeholder}
         tabIndex={expanded ? 0 : -1}
         className="w-full min-w-0 bg-transparent pr-3 text-sm text-navy-900 outline-none placeholder:text-navy-500/60"
       />

@@ -7,26 +7,29 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const SORT_OPTIONS = [
-  { value: "displayName", label: "Nome" },
-  { value: "createdAt", label: "Data de criação" },
-  { value: "status", label: "Status" },
-  { value: "ownerFullName", label: "Responsável" },
-  { value: "country", label: "País" },
-] as const;
+export type SortOption = { value: string; label: string };
 
-const DEFAULT_SORT_BY = "displayName";
 const DEFAULT_SORT_DIR = "asc";
 
-export function SortMenu() {
+export function SortMenu({
+  basePath,
+  options,
+  defaultSortBy,
+  ariaLabel,
+}: {
+  basePath: string;
+  options: readonly SortOption[];
+  defaultSortBy: string;
+  ariaLabel: string;
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const sortBy = searchParams.get("sortBy") ?? DEFAULT_SORT_BY;
+  const sortBy = searchParams.get("sortBy") ?? defaultSortBy;
   const sortDir = searchParams.get("sortDir") ?? DEFAULT_SORT_DIR;
-  const isActive = sortBy !== DEFAULT_SORT_BY || sortDir !== DEFAULT_SORT_DIR;
+  const isActive = sortBy !== defaultSortBy || sortDir !== DEFAULT_SORT_DIR;
 
   useEffect(() => {
     if (!open) return;
@@ -50,7 +53,7 @@ export function SortMenu() {
       params.set("sortDir", "asc");
     }
     params.set("offset", "0");
-    router.push(`/clientes?${params.toString()}`);
+    router.push(`${basePath}?${params.toString()}`);
   }
 
   return (
@@ -58,7 +61,7 @@ export function SortMenu() {
       <Button
         variant="secondary"
         onClick={() => setOpen((value) => !value)}
-        aria-label="Ordenar clientes"
+        aria-label={ariaLabel}
         title="Ordenar"
         className={cn("h-9 w-9 p-0", isActive && "border-navy-900 text-navy-900")}
       >
@@ -70,7 +73,7 @@ export function SortMenu() {
           <p className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-navy-400">
             Ordenar por
           </p>
-          {SORT_OPTIONS.map((option) => {
+          {options.map((option) => {
             const active = option.value === sortBy;
             return (
               <button

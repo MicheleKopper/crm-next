@@ -17,6 +17,8 @@
   --status-inativo: #7a8699;
   --status-perdido: #e0473f;
   --status-incompleto: #b1b1b1;
+  --status-warning: #d97706;
+  --status-orange: #ea580c;
 }
 
 @theme inline {
@@ -36,6 +38,8 @@
   --color-status-inativo: var(--status-inativo);
   --color-status-perdido: var(--status-perdido);
   --color-status-incompleto: var(--status-incompleto);
+  --color-status-warning: var(--status-warning);
+  --color-status-orange: var(--status-orange);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);

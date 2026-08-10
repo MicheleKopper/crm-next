@@ -1,6 +1,5 @@
+import { DetailField } from "@/components/ui/detail-field";
 import type { CustomerDetail } from "@/server/modules/customers/customer.mapper";
-
-import { DetailField } from "./detail-field";
 
 export function CompanyInfoView({ customer }: { customer: CustomerDetail }) {
   return (

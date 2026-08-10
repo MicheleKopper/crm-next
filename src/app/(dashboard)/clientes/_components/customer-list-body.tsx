@@ -1,10 +1,10 @@
 "use client";
 
+import { useViewMode } from "@/components/list/view-mode";
 import type { CustomerListRow } from "@/server/modules/customers/customer.repository";
 
 import { CustomerRow } from "./customer-row";
 import { CustomerTableView } from "./customer-table-view";
-import { useViewMode } from "./view-mode-context";
 
 export function CustomerListBody({ items }: { items: CustomerListRow[] }) {
   const { view } = useViewMode();

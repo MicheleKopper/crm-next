@@ -12,12 +12,18 @@ const ADMIN_PERMISSIONS = {
   customers_create: true,
   customers_edit: true,
   customers_delete: true,
+  leads_create: true,
+  leads_edit: true,
+  leads_delete: true,
 };
 
 const COMMERCIAL_PERMISSIONS = {
   customers_create: true,
   customers_edit: true,
   customers_delete: false,
+  leads_create: true,
+  leads_edit: true,
+  leads_delete: false,
 };
 
 type SeedCustomer = {
@@ -52,6 +58,35 @@ const CUSTOMERS: SeedCustomer[] = [
   { displayName: "Jade Ocean Partners", legalName: "Jade Ocean Partners Pte. Ltd.", taxId: "UEN-201812345K", country: "SINGAPORE", city: "Singapore", state: "Singapore", segment: "Trading", size: "Corporativo", status: "Lead", accountPotential: "Alto", cargoType: "Isotank" },
 ];
 
+function slugify(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, "");
+}
+
+type SeedLead = {
+  companyName: string;
+  legalName: string;
+  taxId: string;
+  contactName: string;
+  contactLastName: string;
+  jobTitle: string;
+  status: string;
+  urgency: string;
+  modal: string;
+  score: number;
+  source: string;
+};
+
+const LEADS: SeedLead[] = [
+  { companyName: "Nortel Química", legalName: "Nortel Química Industrial LTDA", taxId: "78.901.234/0001-55", contactName: "Rafael", contactLastName: "Souza", jobTitle: "Gerente de Compras", status: "Novo", urgency: "Alto", modal: "Marítimo", score: 65, source: "Site" },
+  { companyName: "Vale Azul Alimentos", legalName: "Vale Azul Alimentos Exportação LTDA", taxId: "89.012.345/0001-66", contactName: "Camila", contactLastName: "Ferreira", jobTitle: "Diretora Comercial", status: "Em contato", urgency: "Médio", modal: "Marítimo", score: 48, source: "Indicação" },
+  { companyName: "Pampa Rodas", legalName: "Pampa Rodas Transportes LTDA", taxId: "90.123.456/0001-77", contactName: "Eduardo", contactLastName: "Martins", jobTitle: "Comprador", status: "Em negociação", urgency: "Crítico", modal: "Rodoviário", score: 82, source: "Evento" },
+  { companyName: "Cristal Vidros", legalName: "Cristal Vidros do Brasil LTDA", taxId: "01.234.567/0001-88", contactName: "Fernanda", contactLastName: "Lima", jobTitle: "Analista de Importação", status: "Perdido", urgency: "Baixo", modal: "Aéreo", score: 22, source: "Online" },
+];
+
 async function main() {
   const [adminPasswordHash, commercialPasswordHash] = await Promise.all([
     bcrypt.hash("admin123", 10),
@@ -66,7 +101,7 @@ async function main() {
       passwordHash: adminPasswordHash,
       permissions: ADMIN_PERMISSIONS,
     },
-    update: { fullName: "Michele Kopper" },
+    update: { fullName: "Michele Kopper", permissions: ADMIN_PERMISSIONS },
   });
 
   const commercial = await prisma.user.upsert({
@@ -77,7 +112,7 @@ async function main() {
       passwordHash: commercialPasswordHash,
       permissions: COMMERCIAL_PERMISSIONS,
     },
-    update: {},
+    update: { permissions: COMMERCIAL_PERMISSIONS },
   });
 
   const owners = [admin.id, commercial.id];
@@ -123,6 +158,55 @@ async function main() {
               },
             }
           : undefined,
+      },
+    });
+  }
+
+  for (const [index, lead] of LEADS.entries()) {
+    const existingCompany = await prisma.company.findUnique({
+      where: { taxId: lead.taxId },
+    });
+    if (existingCompany) continue;
+
+    const operatorId = owners[index % owners.length];
+
+    const company = await prisma.company.create({
+      data: {
+        displayName: lead.companyName,
+        legalName: lead.legalName,
+        taxId: lead.taxId,
+        foreignValue: false,
+        country: "BRAZIL",
+        companyType: ["Lead"],
+      },
+    });
+
+    const contact = await prisma.contact.create({
+      data: {
+        companyId: company.id,
+        firstName: lead.contactName,
+        lastName: lead.contactLastName,
+        fullName: `${lead.contactName} ${lead.contactLastName}`,
+        email: `${slugify(lead.contactName)}.${slugify(lead.contactLastName)}@${slugify(lead.companyName)}.com.br`,
+        phoneNumber: `+55 (11) 9${(3000 + index).toString().padStart(4, "0")}-${(4000 + index).toString().padStart(4, "0")}`,
+        jobTitle: lead.jobTitle,
+        language: "Português",
+      },
+    });
+
+    await prisma.lead.create({
+      data: {
+        customerId: company.id,
+        contactId: contact.id,
+        operatorId,
+        status: lead.status,
+        source: lead.source,
+        urgency: lead.urgency,
+        score: lead.score,
+        currency: "BRL",
+        modal: lead.modal,
+        estimatedVolume: 5 + index,
+        volumeUnit: "Container",
       },
     });
   }

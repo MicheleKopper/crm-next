@@ -6,7 +6,10 @@ import { getSession, type SessionPayload } from "./session";
 export type PermissionKey =
   | "customers_create"
   | "customers_edit"
-  | "customers_delete";
+  | "customers_delete"
+  | "leads_create"
+  | "leads_edit"
+  | "leads_delete";
 
 export async function requireSession(): Promise<SessionPayload> {
   const session = await getSession();

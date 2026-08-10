@@ -1,10 +1,51 @@
 "use client";
 
 import { LayoutGrid, List } from "lucide-react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
-import { useViewMode } from "./view-mode-context";
+export type ViewMode = "cards" | "list";
+
+const ViewModeContext = createContext<{
+  view: ViewMode;
+  setView: (view: ViewMode) => void;
+} | null>(null);
+
+export function ViewModeProvider({
+  storageKey,
+  children,
+}: {
+  storageKey: string;
+  children: React.ReactNode;
+}) {
+  const [view, setViewState] = useState<ViewMode>("cards");
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem(storageKey);
+    if (stored === "cards" || stored === "list") setViewState(stored);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function setView(next: ViewMode) {
+    setViewState(next);
+    window.localStorage.setItem(storageKey, next);
+  }
+
+  return (
+    <ViewModeContext.Provider value={{ view, setView }}>
+      {children}
+    </ViewModeContext.Provider>
+  );
+}
+
+export function useViewMode() {
+  const context = useContext(ViewModeContext);
+  if (!context) {
+    throw new Error("useViewMode deve ser usado dentro de ViewModeProvider.");
+  }
+  return context;
+}
 
 export function ViewToggle() {
   const { view, setView } = useViewMode();

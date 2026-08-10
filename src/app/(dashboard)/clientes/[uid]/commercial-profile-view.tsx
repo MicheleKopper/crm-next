@@ -1,6 +1,5 @@
+import { DetailField, DetailTextBlock } from "@/components/ui/detail-field";
 import type { CustomerDetail } from "@/server/modules/customers/customer.mapper";
-
-import { DetailField, DetailTextBlock } from "./detail-field";
 
 export function CommercialProfileView({
   customer,

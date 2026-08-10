@@ -17,6 +17,7 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at")
 
   ownedCompanies Company[] @relation("CompanyOwner")
+  operatedLeads  Lead[]    @relation("LeadOperator")
 
   @@map("users")
 }
@@ -27,7 +28,8 @@ model Company {
   legalName    String   @map("legal_name")
   taxId        String   @unique @map("tax_id")
   foreignValue Boolean  @default(false) @map("foreign_value")
-  phone        String   @unique
+  /// Nullable: leads created without a company phone (only Customers collect it today)
+  phone        String?  @unique
   website      String?
   address1     String?
   number       String?
@@ -44,6 +46,8 @@ model Company {
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   customerProfile CustomerProfile?
+  leads           Lead[]
+  contacts        Contact[]
 
   @@map("companies")
 }
@@ -70,4 +74,58 @@ model CustomerProfile {
   updatedAt        DateTime @updatedAt @map("updated_at")
 
   @@map("customer_profiles")
+}
+
+model Lead {
+  id                     String    @id @default(uuid()) @db.Uuid
+  customerId             String    @db.Uuid @map("customer_id")
+  customer               Company   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  contactId              String?   @db.Uuid @map("contact_id")
+  contact                Contact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  operatorId             String?   @db.Uuid @map("operator_id")
+  operator               User?     @relation("LeadOperator", fields: [operatorId], references: [id])
+  status                 String    @default("Novo")
+  source                 String
+  campaign               String?
+  urgency                String
+  score                  Int
+  currency               String?
+  modal                  String
+  estimatedVolume        Int       @map("estimated_volume")
+  volumeUnit             String    @map("volume_unit")
+  painIdentified         String?   @map("pain_identified")
+  interest               String?
+  disqualificationReason String?   @map("disqualification_reason")
+  lastInteractionAt      DateTime? @map("last_interaction_at")
+  convertedAt            DateTime? @map("converted_at")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+
+  @@map("leads")
+}
+
+/// Belongs to a Company (not to a single Lead) so the same person can be
+/// reused across multiple leads — mirrors the standalone "Contatos" module.
+model Contact {
+  id          String    @id @default(uuid()) @db.Uuid
+  companyId   String    @db.Uuid @map("company_id")
+  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  firstName   String    @map("first_name")
+  lastName    String    @map("last_name")
+  fullName    String    @map("full_name")
+  extension   String?
+  phoneNumber String?   @map("phone_number")
+  workPhone   String?   @map("work_phone")
+  email       String?
+  pronoun     String?
+  photo       String?
+  birthday    DateTime? @db.Date
+  language    String?   @default("Português")
+  jobTitle    String?   @map("job_title")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  leads Lead[]
+
+  @@map("contacts")
 }

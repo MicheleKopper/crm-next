@@ -1,18 +1,28 @@
 import Link from "next/link";
 
+import { ExportModal } from "@/components/list/export-modal";
+import { SearchBar } from "@/components/list/search-bar";
+import { SortMenu } from "@/components/list/sort-menu";
+import { ViewModeProvider, ViewToggle } from "@/components/list/view-mode";
 import { Pagination } from "@/components/ui/pagination";
 import { getSession } from "@/server/auth/session";
-import { listCustomersQuerySchema } from "@/server/modules/customers/customer.dto";
+import {
+  CUSTOMER_SORT_FIELDS,
+  listCustomersQuerySchema,
+} from "@/server/modules/customers/customer.dto";
 import { getCustomerList } from "@/server/modules/customers/customer.service";
 
 import { CreateCustomerDrawer } from "./_components/create-customer-drawer";
 import { CustomerListBody } from "./_components/customer-list-body";
-import { ExportModal } from "./_components/export-modal";
 import { FilterModal } from "./_components/filter-modal";
-import { SearchBar } from "./_components/search-bar";
-import { SortMenu } from "./_components/sort-menu";
-import { ViewModeProvider } from "./_components/view-mode-context";
-import { ViewToggle } from "./_components/view-toggle";
+
+const SORT_OPTIONS = [
+  { value: "displayName", label: "Nome" },
+  { value: "createdAt", label: "Data de criação" },
+  { value: "status", label: "Status" },
+  { value: "ownerFullName", label: "Responsável" },
+  { value: "country", label: "País" },
+] satisfies { value: (typeof CUSTOMER_SORT_FIELDS)[number]; label: string }[];
 
 export default async function CustomersPage({
   searchParams,
@@ -26,7 +36,7 @@ export default async function CustomersPage({
   ]);
 
   return (
-    <ViewModeProvider>
+    <ViewModeProvider storageKey="clientes:view-mode">
       <div className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -40,10 +50,26 @@ export default async function CustomersPage({
           </div>
 
           <div className="flex items-center gap-2">
-            <SearchBar />
-            <SortMenu />
+            <SearchBar
+              basePath="/clientes"
+              placeholder="Busque por nome ou país…"
+              ariaLabel="Buscar clientes"
+            />
+            <SortMenu
+              basePath="/clientes"
+              options={SORT_OPTIONS}
+              defaultSortBy="displayName"
+              ariaLabel="Ordenar clientes"
+            />
             <FilterModal owners={owners} />
-            <ExportModal />
+            <ExportModal
+              exportUrl="/api/customers/export"
+              filenamePrefix="clientes"
+              modalTitle="Exportar clientes"
+              triggerAriaLabel="Exportar clientes"
+              successMessage="Clientes exportados com sucesso!"
+              errorMessage="Erro ao exportar clientes."
+            />
             <ViewToggle />
             <CreateCustomerDrawer owners={owners} currentUserId={session!.sub} />
           </div>
@@ -55,6 +81,7 @@ export default async function CustomersPage({
           {items.length > 0 && !query.search && (
             <div className="mt-4">
               <Pagination
+                basePath="/clientes"
                 limit={query.limit}
                 offset={query.offset}
                 currentCount={items.length}

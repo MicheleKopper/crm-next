@@ -38,7 +38,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: "Dashboard" },
       { label: "Clientes", href: "/clientes" },
-      { label: "Leads" },
+      { label: "Leads", href: "/leads" },
       { label: "Contatos" },
       { label: "Oportunidades" },
       { label: "Atividades" },

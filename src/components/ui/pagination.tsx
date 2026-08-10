@@ -4,11 +4,13 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export function Pagination({
+  basePath,
   limit,
   offset,
   currentCount,
   totalCount,
 }: {
+  basePath: string;
   limit: number;
   offset: number;
   currentCount: number;
@@ -22,7 +24,7 @@ export function Pagination({
     for (const [key, value] of Object.entries(next)) {
       params.set(key, value);
     }
-    router.push(`/clientes?${params.toString()}`);
+    router.push(`${basePath}?${params.toString()}`);
   }
 
   const hasPrevious = offset > 0;

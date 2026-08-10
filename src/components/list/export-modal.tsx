@@ -9,7 +9,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Modal } from "@/components/ui/modal";
 
-export function ExportModal() {
+export function ExportModal({
+  exportUrl,
+  filenamePrefix,
+  modalTitle,
+  triggerAriaLabel,
+  successMessage,
+  errorMessage,
+}: {
+  exportUrl: string;
+  filenamePrefix: string;
+  modalTitle: string;
+  triggerAriaLabel: string;
+  successMessage: string;
+  errorMessage: string;
+}) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -27,11 +41,11 @@ export function ExportModal() {
         from: String(from),
         until: String(until),
       });
-      const response = await fetch(`/api/customers/export?${params.toString()}`);
+      const response = await fetch(`${exportUrl}?${params.toString()}`);
 
       if (!response.ok) {
         const body = await response.json().catch(() => null);
-        toast.error(body?.message ?? "Erro ao exportar clientes.");
+        toast.error(body?.message ?? errorMessage);
         return;
       }
 
@@ -39,11 +53,11 @@ export function ExportModal() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `clientes-${Date.now()}.csv`;
+      link.download = `${filenamePrefix}-${Date.now()}.csv`;
       link.click();
       URL.revokeObjectURL(url);
 
-      toast.success("Clientes exportados com sucesso!");
+      toast.success(successMessage);
       setOpen(false);
     } finally {
       setLoading(false);
@@ -55,14 +69,14 @@ export function ExportModal() {
       <Button
         variant="secondary"
         onClick={() => setOpen(true)}
-        aria-label="Exportar clientes"
+        aria-label={triggerAriaLabel}
         title="Exportar"
         className="h-9 w-9 p-0"
       >
         <FileDown size={16} />
       </Button>
 
-      <Modal open={open} onClose={() => setOpen(false)} title="Exportar clientes">
+      <Modal open={open} onClose={() => setOpen(false)} title={modalTitle}>
         <form action={handleExport} className="space-y-4">
           <div>
             <Label htmlFor="export-from">De</Label>
