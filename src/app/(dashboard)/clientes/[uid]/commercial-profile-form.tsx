@@ -24,10 +24,12 @@ import type { CustomerDetail } from "@/server/modules/customers/customer.mapper"
 
 export function CommercialProfileForm({
   customer,
-  canEdit,
+  onSaved,
+  onCancel,
 }: {
   customer: CustomerDetail;
-  canEdit: boolean;
+  onSaved: () => void;
+  onCancel: () => void;
 }) {
   const router = useRouter();
   const {
@@ -71,6 +73,7 @@ export function CommercialProfileForm({
 
     toast.success("Cliente editado com sucesso.");
     router.refresh();
+    onSaved();
   }
 
   return (
@@ -78,7 +81,7 @@ export function CommercialProfileForm({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <Label>Origem</Label>
-          <Select disabled={!canEdit} {...register("source")}>
+          <Select {...register("source")}>
             <option value="">Selecione</option>
             <option value="Indicação">Indicação</option>
             <option value="Evento">Evento</option>
@@ -89,12 +92,12 @@ export function CommercialProfileForm({
 
         <div>
           <Label>Especifique a Origem</Label>
-          <Input disabled={!canEdit} {...register("sourceSpecify")} />
+          <Input {...register("sourceSpecify")} />
         </div>
 
         <div>
           <Label>Status</Label>
-          <Select disabled={!canEdit} {...register("status")}>
+          <Select {...register("status")}>
             <option value="">Selecione</option>
             {CUSTOMER_STATUSES.map((option) => (
               <option key={option} value={option}>
@@ -106,7 +109,7 @@ export function CommercialProfileForm({
 
         <div>
           <Label>Segmento</Label>
-          <Select disabled={!canEdit} {...register("segment")}>
+          <Select {...register("segment")}>
             <option value="">Selecione</option>
             {CUSTOMER_SEGMENTS.map((option) => (
               <option key={option} value={option}>
@@ -118,7 +121,7 @@ export function CommercialProfileForm({
 
         <div>
           <Label>Porte</Label>
-          <Select disabled={!canEdit} {...register("size")}>
+          <Select {...register("size")}>
             <option value="">Selecione</option>
             {CUSTOMER_SIZES.map((option) => (
               <option key={option} value={option}>
@@ -130,7 +133,7 @@ export function CommercialProfileForm({
 
         <div>
           <Label>Potencial da Conta</Label>
-          <Select disabled={!canEdit} {...register("accountPotential")}>
+          <Select {...register("accountPotential")}>
             <option value="">Selecione</option>
             {ACCOUNT_POTENTIALS.map((option) => (
               <option key={option} value={option}>
@@ -142,7 +145,7 @@ export function CommercialProfileForm({
 
         <div>
           <Label>Tipo de Carga</Label>
-          <Select disabled={!canEdit} {...register("cargoType")}>
+          <Select {...register("cargoType")}>
             <option value="">Selecione</option>
             {CARGO_TYPES.map((option) => (
               <option key={option} value={option}>
@@ -154,7 +157,7 @@ export function CommercialProfileForm({
 
         <div>
           <Label>Incoterms</Label>
-          <Select disabled={!canEdit} {...register("incoterms")}>
+          <Select {...register("incoterms")}>
             <option value="">Selecione</option>
             {[
               "EXW",
@@ -178,17 +181,12 @@ export function CommercialProfileForm({
 
         <div>
           <Label>Volume Estimado</Label>
-          <Input
-            type="number"
-            min={1}
-            disabled={!canEdit}
-            {...register("estimatedVolume")}
-          />
+          <Input type="number" min={1} {...register("estimatedVolume")} />
         </div>
 
         <div>
           <Label>Unidade</Label>
-          <Select disabled={!canEdit} {...register("volumeUnit")}>
+          <Select {...register("volumeUnit")}>
             <option value="">Selecione</option>
             {[
               "Container",
@@ -208,7 +206,7 @@ export function CommercialProfileForm({
 
         <div>
           <Label>Moeda</Label>
-          <Select disabled={!canEdit} {...register("currency")}>
+          <Select {...register("currency")}>
             <option value="">Selecione</option>
             <option value="BRL">BRL</option>
             <option value="USD">USD</option>
@@ -220,29 +218,33 @@ export function CommercialProfileForm({
       <div className="space-y-4">
         <div>
           <Label>Rotas Principais</Label>
-          <Input
-            placeholder="Ex: SHA-ITJ, MIA-GRU"
-            disabled={!canEdit}
-            {...register("mainRoutes")}
-          />
+          <Input placeholder="Ex: SHA-ITJ, MIA-GRU" {...register("mainRoutes")} />
         </div>
 
         <div>
           <Label>Restrições Operacionais</Label>
-          <Textarea rows={3} disabled={!canEdit} {...register("restrictions")} />
+          <Textarea rows={3} {...register("restrictions")} />
         </div>
 
         <div>
           <Label>Observações</Label>
-          <Textarea rows={4} disabled={!canEdit} {...register("notes")} />
+          <Textarea rows={4} {...register("notes")} />
         </div>
       </div>
 
-      {canEdit && (
+      <div className="flex items-center gap-2">
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Salvando..." : "Salvar perfil comercial"}
+          {isSubmitting ? "Salvando..." : "Salvar"}
         </Button>
-      )}
+        <Button
+          type="button"
+          variant="secondary"
+          disabled={isSubmitting}
+          onClick={onCancel}
+        >
+          Cancelar
+        </Button>
+      </div>
     </form>
   );
 }

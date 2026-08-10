@@ -19,11 +19,13 @@ import {
 export function CompanyInfoForm({
   customer,
   owners,
-  canEdit,
+  onSaved,
+  onCancel,
 }: {
   customer: CustomerDetail;
   owners: { id: string; fullName: string }[];
-  canEdit: boolean;
+  onSaved: () => void;
+  onCancel: () => void;
 }) {
   const router = useRouter();
   const {
@@ -68,6 +70,7 @@ export function CompanyInfoForm({
 
     toast.success("Cliente editado com sucesso.");
     router.refresh();
+    onSaved();
   }
 
   return (
@@ -79,7 +82,6 @@ export function CompanyInfoForm({
         <input
           id="isForeignCompany"
           type="checkbox"
-          disabled={!canEdit}
           {...register("isForeignCompany")}
           className="h-4 w-4 rounded border-navy-100"
         />
@@ -89,34 +91,34 @@ export function CompanyInfoForm({
       </div>
 
       <Field label="País" error={errors.country?.message}>
-        <Input disabled={!canEdit} {...register("country")} />
+        <Input {...register("country")} />
       </Field>
 
       <Field label="Razão Social" error={errors.legalName?.message}>
-        <Input disabled={!canEdit} {...register("legalName")} />
+        <Input {...register("legalName")} />
       </Field>
 
       <Field label="Nome" error={errors.displayName?.message}>
-        <Input disabled={!canEdit} {...register("displayName")} />
+        <Input {...register("displayName")} />
       </Field>
 
       <Field
         label={isForeignCompany ? "Tax ID" : "CNPJ"}
         error={errors.taxId?.message}
       >
-        <Input disabled={!canEdit} {...register("taxId")} />
+        <Input {...register("taxId")} />
       </Field>
 
       <Field label="Telefone" error={errors.phone?.message}>
-        <Input disabled={!canEdit} {...register("phone")} />
+        <Input {...register("phone")} />
       </Field>
 
       <Field label="Website">
-        <Input disabled={!canEdit} {...register("website")} />
+        <Input {...register("website")} />
       </Field>
 
       <Field label="Responsável" error={errors.ownerId?.message}>
-        <Select disabled={!canEdit} {...register("ownerId")}>
+        <Select {...register("ownerId")}>
           <option value="">Selecione</option>
           {owners.map((owner) => (
             <option key={owner.id} value={owner.id}>
@@ -130,39 +132,45 @@ export function CompanyInfoForm({
         label={isForeignCompany ? "Código Postal" : "CEP"}
         error={errors.postalCode?.message}
       >
-        <Input disabled={!canEdit} {...register("postalCode")} />
+        <Input {...register("postalCode")} />
       </Field>
 
       <Field
         label={isForeignCompany ? "State / Province" : "Estado"}
         error={errors.state?.message}
       >
-        <Input disabled={!canEdit} {...register("state")} />
+        <Input {...register("state")} />
       </Field>
 
       <Field label="Cidade" error={errors.city?.message}>
-        <Input disabled={!canEdit} {...register("city")} />
+        <Input {...register("city")} />
       </Field>
 
       <Field label="Endereço" error={errors.address?.message}>
-        <Input disabled={!canEdit} {...register("address")} />
+        <Input {...register("address")} />
       </Field>
 
       <Field label="Número" error={errors.number?.message}>
-        <Input disabled={!canEdit} {...register("number")} />
+        <Input {...register("number")} />
       </Field>
 
       <Field label="Complemento">
-        <Input disabled={!canEdit} {...register("complement")} />
+        <Input {...register("complement")} />
       </Field>
 
-      {canEdit && (
-        <div className="sm:col-span-2">
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Salvando..." : "Salvar identificação e endereço"}
-          </Button>
-        </div>
-      )}
+      <div className="flex items-center gap-2 sm:col-span-2">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Salvando..." : "Salvar"}
+        </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          disabled={isSubmitting}
+          onClick={onCancel}
+        >
+          Cancelar
+        </Button>
+      </div>
     </form>
   );
 }

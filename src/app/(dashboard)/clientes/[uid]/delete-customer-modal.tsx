@@ -1,6 +1,5 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -8,15 +7,18 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 
-export function DeleteCustomerButton({
+export function DeleteCustomerModal({
+  open,
+  onClose,
   uid,
   displayName,
 }: {
+  open: boolean;
+  onClose: () => void;
   uid: string;
   displayName: string;
 }) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleDelete() {
@@ -41,26 +43,19 @@ export function DeleteCustomerButton({
   }
 
   return (
-    <>
-      <Button variant="danger" onClick={() => setOpen(true)}>
-        <Trash2 size={16} />
-        Excluir
-      </Button>
-
-      <Modal open={open} onClose={() => setOpen(false)} title="Excluir cliente">
-        <p className="text-sm text-navy-700">
-          Tem certeza que deseja excluir <strong>{displayName}</strong>? Essa
-          ação não pode ser desfeita.
-        </p>
-        <div className="mt-4 flex justify-end gap-2">
-          <Button variant="secondary" onClick={() => setOpen(false)}>
-            Cancelar
-          </Button>
-          <Button variant="danger" disabled={loading} onClick={handleDelete}>
-            {loading ? "Excluindo..." : "Excluir"}
-          </Button>
-        </div>
-      </Modal>
-    </>
+    <Modal open={open} onClose={onClose} title="Excluir cliente">
+      <p className="text-sm text-navy-700">
+        Tem certeza que deseja excluir <strong>{displayName}</strong>? Essa
+        ação não pode ser desfeita.
+      </p>
+      <div className="mt-4 flex justify-end gap-2">
+        <Button variant="secondary" onClick={onClose}>
+          Cancelar
+        </Button>
+        <Button variant="danger" disabled={loading} onClick={handleDelete}>
+          {loading ? "Excluindo..." : "Excluir"}
+        </Button>
+      </div>
+    </Modal>
   );
 }

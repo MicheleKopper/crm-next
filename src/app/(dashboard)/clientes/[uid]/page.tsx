@@ -1,14 +1,20 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { StatusBadge } from "@/components/ui/badge";
 import { getSession } from "@/server/auth/session";
 import { getCustomerByUid, listOwners } from "@/server/modules/customers/customer.service";
 import { NotFoundError } from "@/server/shared/errors";
 
-import { CommercialProfileForm } from "./commercial-profile-form";
-import { CompanyInfoForm } from "./company-info-form";
-import { DeleteCustomerButton } from "./delete-customer-button";
+import { CommercialProfileSection } from "./commercial-profile-section";
+import { CompanyInfoSection } from "./company-info-section";
+import { DeleteCustomerTrigger } from "./delete-customer-trigger";
+import { StatusPicker } from "./status-picker";
+
+function getInitials(name: string) {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  const initials = words.slice(0, 2).map((word) => word[0]);
+  return initials.join("").toUpperCase();
+}
 
 export default async function CustomerDetailPage({
   params,
@@ -33,39 +39,50 @@ export default async function CustomerDetailPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm text-navy-500">
-            <Link href="/clientes" className="hover:underline">
-              Clientes
-            </Link>{" "}
-            &gt; {customer.displayName}
-          </p>
-          <div className="mt-1 flex items-center gap-3">
+      <p className="text-sm text-navy-500">
+        <Link href="/clientes" className="hover:underline">
+          Clientes
+        </Link>{" "}
+        &gt; {customer.displayName}
+      </p>
+
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-navy-900 text-lg font-bold text-white">
+            {getInitials(customer.displayName)}
+          </div>
+          <div>
             <h1 className="text-2xl font-bold text-navy-900">
               {customer.displayName}
             </h1>
-            <StatusBadge status={customer.status} />
+            <div className="mt-1">
+              <StatusPicker
+                uid={customer.uid}
+                status={customer.status}
+                canEdit={canEdit}
+              />
+            </div>
           </div>
         </div>
+
         {canDelete && (
-          <DeleteCustomerButton uid={customer.uid} displayName={customer.displayName} />
+          <DeleteCustomerTrigger
+            uid={customer.uid}
+            displayName={customer.displayName}
+          />
         )}
       </div>
 
-      <section className="rounded-xl bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-base font-bold text-navy-900">
-          Identificação e Localização
-        </h2>
-        <CompanyInfoForm customer={customer} owners={owners} canEdit={canEdit} />
-      </section>
+      <CompanyInfoSection customer={customer} owners={owners} canEdit={canEdit} />
 
-      <section className="rounded-xl bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-base font-bold text-navy-900">
-          Perfil Comercial e Observações
-        </h2>
-        <CommercialProfileForm customer={customer} canEdit={canEdit} />
-      </section>
+      <CommercialProfileSection customer={customer} canEdit={canEdit} />
+
+      <Link
+        href="/clientes"
+        className="inline-block text-sm font-medium text-navy-500 hover:text-navy-900 hover:underline"
+      >
+        ← Voltar para a lista
+      </Link>
     </div>
   );
 }
