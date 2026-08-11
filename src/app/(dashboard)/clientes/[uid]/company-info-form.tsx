@@ -86,7 +86,7 @@ export function CompanyInfoForm({
           className="h-4 w-4 rounded border-navy-100"
         />
         <Label htmlFor="isForeignCompany" className="mb-0">
-          Empresa Estrangeira
+          Empresa estrangeira
         </Label>
       </div>
 
@@ -94,7 +94,7 @@ export function CompanyInfoForm({
         <Input {...register("country")} />
       </Field>
 
-      <Field label="Razão Social" error={errors.legalName?.message}>
+      <Field label="Razão social" error={errors.legalName?.message}>
         <Input {...register("legalName")} />
       </Field>
 
@@ -129,14 +129,14 @@ export function CompanyInfoForm({
       </Field>
 
       <Field
-        label={isForeignCompany ? "Código Postal" : "CEP"}
+        label={isForeignCompany ? "Código postal" : "CEP"}
         error={errors.postalCode?.message}
       >
         <Input {...register("postalCode")} />
       </Field>
 
       <Field
-        label={isForeignCompany ? "State / Province" : "Estado"}
+        label={isForeignCompany ? "State / province" : "Estado"}
         error={errors.state?.message}
       >
         <Input {...register("state")} />

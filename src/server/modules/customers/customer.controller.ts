@@ -15,7 +15,7 @@ import * as customerService from "./customer.service";
 
 const EXPORT_COLUMNS = [
   { key: "displayName", label: "Nome" },
-  { key: "legalName", label: "Razão Social" },
+  { key: "legalName", label: "Razão social" },
   { key: "taxId", label: "CNPJ/Tax ID" },
   { key: "country", label: "País" },
   { key: "city", label: "Cidade" },
@@ -26,8 +26,8 @@ const EXPORT_COLUMNS = [
   { key: "size", label: "Porte" },
   { key: "status", label: "Status" },
   { key: "accountPotential", label: "Potencial" },
-  { key: "cargoType", label: "Tipo de Carga" },
-  { key: "estimatedVolume", label: "Volume Estimado" },
+  { key: "cargoType", label: "Tipo de carga" },
+  { key: "estimatedVolume", label: "Volume estimado" },
   { key: "volumeUnit", label: "Unidade" },
   { key: "currency", label: "Moeda" },
   { key: "ownerFullName", label: "Responsável" },

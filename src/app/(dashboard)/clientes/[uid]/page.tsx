@@ -43,7 +43,7 @@ export default async function CustomerDetailPage({
         <Link href="/clientes" className="hover:underline">
           Clientes
         </Link>{" "}
-        &gt; {customer.displayName}
+        &gt; Detalhes
       </p>
 
       <div className="flex items-start justify-between gap-4">

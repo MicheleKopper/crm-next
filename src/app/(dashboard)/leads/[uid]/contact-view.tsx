@@ -10,7 +10,7 @@ export function ContactView({ lead }: { lead: LeadDetail }) {
       <DetailField label="Cargo" value={contact?.jobTitle} />
       <DetailField label="E-mail" value={contact?.email} copyable />
       <DetailField label="Celular" value={contact?.phone} copyable />
-      <DetailField label="Telefone Fixo" value={contact?.workPhone} copyable />
+      <DetailField label="Telefone fixo" value={contact?.workPhone} copyable />
       <DetailField label="Ramal" value={contact?.extension} />
       <DetailField
         label="Aniversário"

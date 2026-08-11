@@ -1,4 +1,4 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, User } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -9,18 +9,15 @@ import { cn } from "@/lib/utils";
  */
 const MOCK_OPPORTUNITIES = [
   {
-    status: "Em negociação",
+    status: "Negociação",
     title: "Contrato anual de frete marítimo",
     service: "Serviço 01",
-    estimatedValue: "BRL 45.000",
-    closesAt: "28/07/2026",
     operatorFullName: "Michele Kopper",
-    createdAt: "10/07/2026",
   },
 ];
 
 const STATUS_CLASSES: Record<string, string> = {
-  "Em negociação": "bg-status-orange/10 text-status-orange",
+  Negociação: "bg-status-orange/10 text-status-orange",
   Ganha: "bg-status-ativo/10 text-status-ativo",
   Perdida: "bg-status-perdido/10 text-status-perdido",
 };
@@ -35,11 +32,11 @@ export function OpportunitiesTab() {
   }
 
   return (
-    <div>
+    <ul className="divide-y divide-navy-100">
       {MOCK_OPPORTUNITIES.map((opportunity, index) => (
-        <div
+        <li
           key={index}
-          className="grid grid-cols-[104px_2fr_1.5fr_1.5fr_auto] items-start gap-4 border-b border-navy-100 py-4 last:border-b-0"
+          className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-4 py-4 first:pt-0 last:pb-0"
         >
           <span
             className={cn(
@@ -50,40 +47,30 @@ export function OpportunitiesTab() {
             {opportunity.status}
           </span>
 
-          <div className="min-w-0 space-y-1 text-sm">
-            <p className="truncate">
-              <span className="font-semibold text-navy-500">Título</span>{" "}
-              <span className="font-semibold text-navy-900">
-                {opportunity.title}
-              </span>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-navy-900">
+              {opportunity.title}
             </p>
-            <p className="truncate">
-              <span className="font-semibold text-navy-500">Responsável</span>{" "}
-              <span className="text-navy-800">
-                {opportunity.operatorFullName}
-              </span>
+            <p className="mt-0.5 truncate text-xs text-navy-500">
+              {opportunity.service}
             </p>
           </div>
 
-          <div className="grid min-w-0 grid-cols-[auto_1fr] gap-x-2 gap-y-1 text-sm">
-            <span className="font-semibold text-navy-500">Serviço</span>
-            <span className="text-navy-800">{opportunity.service}</span>
-            <span className="font-semibold text-navy-500">Valor Est.</span>
-            <span className="text-navy-800">{opportunity.estimatedValue}</span>
-          </div>
+          <p className="hidden items-center gap-1.5 truncate text-sm text-navy-700 sm:flex">
+            <User size={14} className="shrink-0 text-navy-400" />
+            {opportunity.operatorFullName}
+          </p>
 
-          <div className="grid min-w-0 grid-cols-[auto_1fr] gap-x-2 gap-y-1 text-sm">
-            <span className="font-semibold text-navy-500">Fecha em</span>
-            <span className="text-navy-800">{opportunity.closesAt}</span>
-            <span className="font-semibold text-navy-500">Criado em</span>
-            <span className="text-navy-800">{opportunity.createdAt}</span>
-          </div>
-
-          <span className="rounded-full p-2 text-navy-300">
-            <ChevronRight size={20} />
-          </span>
-        </div>
+          <button
+            type="button"
+            aria-label={`Ver detalhes de ${opportunity.title}`}
+            title="Ver detalhes"
+            className="rounded-lg p-2 text-navy-500 hover:bg-navy-100 hover:text-navy-900"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

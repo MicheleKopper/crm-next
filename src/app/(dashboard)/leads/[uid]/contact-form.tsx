@@ -101,7 +101,7 @@ export function ContactForm({
       </div>
 
       <div>
-        <Label>Telefone Fixo</Label>
+        <Label>Telefone fixo</Label>
         <Input {...register("workPhone")} />
       </div>
 

@@ -18,7 +18,7 @@ export function ContactSection({
   const [editing, setEditing] = useState(false);
 
   return (
-    <div className="border-t border-navy-100 pt-6">
+    <section className="rounded-xl bg-white p-6 shadow-sm">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2 border-l-4 border-navy-900 pl-3">
           <ContactIcon size={16} className="text-navy-900" />
@@ -47,6 +47,6 @@ export function ContactSection({
       ) : (
         <ContactView lead={lead} />
       )}
-    </div>
+    </section>
   );
 }

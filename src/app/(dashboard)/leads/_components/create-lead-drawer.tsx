@@ -244,7 +244,7 @@ export function CreateLeadDrawer({
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field
                     htmlFor="legalName"
-                    label="Razão Social"
+                    label="Razão social"
                     required
                     error={errors.legalName?.message}
                   >
@@ -317,7 +317,7 @@ export function CreateLeadDrawer({
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <Field htmlFor="workPhone" label="Telefone Fixo">
+                  <Field htmlFor="workPhone" label="Telefone fixo">
                     <Input
                       id="workPhone"
                       placeholder="(00) 0000-0000"
@@ -487,7 +487,7 @@ export function CreateLeadDrawer({
 
                 <Field
                   htmlFor="estimatedVolume"
-                  label="Volume Estimado"
+                  label="Volume estimado"
                   required
                   error={errors.estimatedVolume?.message}
                 >
@@ -500,7 +500,7 @@ export function CreateLeadDrawer({
                 </Field>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <Field htmlFor="painIdentified" label="Desafio Atual">
+                  <Field htmlFor="painIdentified" label="Desafio atual">
                     <Textarea id="painIdentified" rows={3} {...register("painIdentified")} />
                   </Field>
                   <Field htmlFor="interest" label="Interesse">

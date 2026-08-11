@@ -25,8 +25,8 @@ export function StatusBadge({ status }: { status: string | null }) {
 
 const LEAD_STATUS_CLASSES: Record<string, string> = {
   Novo: "bg-status-lead/10 text-status-lead",
-  "Em contato": "bg-status-warning/10 text-status-warning",
-  "Em negociação": "bg-status-orange/10 text-status-orange",
+  Contato: "bg-status-warning/10 text-status-warning",
+  Negociação: "bg-status-orange/10 text-status-orange",
   Convertido: "bg-status-ativo/10 text-status-ativo",
   Perdido: "bg-status-perdido/10 text-status-perdido",
 };

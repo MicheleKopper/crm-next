@@ -91,7 +91,7 @@ export function CommercialProfileForm({
         </div>
 
         <div>
-          <Label>Especifique a Origem</Label>
+          <Label>Especifique a origem</Label>
           <Input {...register("sourceSpecify")} />
         </div>
 
@@ -132,7 +132,7 @@ export function CommercialProfileForm({
         </div>
 
         <div>
-          <Label>Potencial da Conta</Label>
+          <Label>Potencial da conta</Label>
           <Select {...register("accountPotential")}>
             <option value="">Selecione</option>
             {ACCOUNT_POTENTIALS.map((option) => (
@@ -144,7 +144,7 @@ export function CommercialProfileForm({
         </div>
 
         <div>
-          <Label>Tipo de Carga</Label>
+          <Label>Tipo de carga</Label>
           <Select {...register("cargoType")}>
             <option value="">Selecione</option>
             {CARGO_TYPES.map((option) => (
@@ -180,7 +180,7 @@ export function CommercialProfileForm({
         </div>
 
         <div>
-          <Label>Volume Estimado</Label>
+          <Label>Volume estimado</Label>
           <Input type="number" min={1} {...register("estimatedVolume")} />
         </div>
 
@@ -217,12 +217,12 @@ export function CommercialProfileForm({
 
       <div className="space-y-4">
         <div>
-          <Label>Rotas Principais</Label>
+          <Label>Rotas principais</Label>
           <Input placeholder="Ex: SHA-ITJ, MIA-GRU" {...register("mainRoutes")} />
         </div>
 
         <div>
-          <Label>Restrições Operacionais</Label>
+          <Label>Restrições operacionais</Label>
           <Textarea rows={3} {...register("restrictions")} />
         </div>
 

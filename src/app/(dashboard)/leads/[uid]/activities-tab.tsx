@@ -1,4 +1,4 @@
-import { ChevronRight } from "lucide-react";
+import { Calendar, ChevronRight, User } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -14,7 +14,6 @@ const MOCK_ACTIVITIES = [
     type: "E-mail",
     scheduledFor: "22/07/2026",
     operatorFullName: "Michele Kopper",
-    createdAt: "27/07/2026",
   },
 ];
 
@@ -24,7 +23,7 @@ const STATUS_CLASSES: Record<string, string> = {
   Cancelada: "bg-status-perdido/10 text-status-perdido",
 };
 
-export function ActivitiesTab({ leadFullName }: { leadFullName: string }) {
+export function ActivitiesTab() {
   if (MOCK_ACTIVITIES.length === 0) {
     return (
       <p className="py-12 text-center text-navy-500">
@@ -34,11 +33,11 @@ export function ActivitiesTab({ leadFullName }: { leadFullName: string }) {
   }
 
   return (
-    <div>
+    <ul className="divide-y divide-navy-100">
       {MOCK_ACTIVITIES.map((activity, index) => (
-        <div
+        <li
           key={index}
-          className="grid grid-cols-[104px_2fr_1.5fr_1.5fr_auto] items-start gap-4 border-b border-navy-100 py-4 last:border-b-0"
+          className="grid grid-cols-[auto_1fr_auto_auto_auto] items-center gap-4 py-4 first:pt-0 last:pb-0"
         >
           <span
             className={cn(
@@ -49,38 +48,35 @@ export function ActivitiesTab({ leadFullName }: { leadFullName: string }) {
             {activity.status}
           </span>
 
-          <div className="min-w-0 space-y-1 text-sm">
-            <p className="truncate">
-              <span className="font-semibold text-navy-500">Assunto</span>{" "}
-              <span className="font-semibold text-navy-900">
-                {activity.subject}
-              </span>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-navy-900">
+              {activity.subject}
             </p>
-            <p className="truncate">
-              <span className="font-semibold text-navy-500">Lead</span>{" "}
-              <span className="text-navy-800">{leadFullName}</span>
+            <p className="mt-0.5 truncate text-xs text-navy-500">
+              {activity.type}
             </p>
           </div>
 
-          <div className="grid min-w-0 grid-cols-[auto_1fr] gap-x-2 gap-y-1 text-sm">
-            <span className="font-semibold text-navy-500">Tipo</span>
-            <span className="text-navy-800">{activity.type}</span>
-            <span className="font-semibold text-navy-500">Agendado para</span>
-            <span className="text-navy-800">{activity.scheduledFor}</span>
-          </div>
+          <p className="hidden items-center gap-1.5 truncate text-sm text-navy-700 sm:flex">
+            <Calendar size={14} className="shrink-0 text-navy-400" />
+            {activity.scheduledFor}
+          </p>
 
-          <div className="grid min-w-0 grid-cols-[auto_1fr] gap-x-2 gap-y-1 text-sm">
-            <span className="font-semibold text-navy-500">Responsável</span>
-            <span className="text-navy-800">{activity.operatorFullName}</span>
-            <span className="font-semibold text-navy-500">Criado em</span>
-            <span className="text-navy-800">{activity.createdAt}</span>
-          </div>
+          <p className="hidden items-center gap-1.5 truncate text-sm text-navy-700 sm:flex">
+            <User size={14} className="shrink-0 text-navy-400" />
+            {activity.operatorFullName}
+          </p>
 
-          <span className="rounded-full p-2 text-navy-300">
-            <ChevronRight size={20} />
-          </span>
-        </div>
+          <button
+            type="button"
+            aria-label={`Ver detalhes de ${activity.subject}`}
+            title="Ver detalhes"
+            className="rounded-lg p-2 text-navy-500 hover:bg-navy-100 hover:text-navy-900"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

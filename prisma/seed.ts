@@ -82,8 +82,8 @@ type SeedLead = {
 
 const LEADS: SeedLead[] = [
   { companyName: "Nortel Química", legalName: "Nortel Química Industrial LTDA", taxId: "78.901.234/0001-55", contactName: "Rafael", contactLastName: "Souza", jobTitle: "Gerente de Compras", status: "Novo", urgency: "Alto", modal: "Marítimo", score: 65, source: "Site" },
-  { companyName: "Vale Azul Alimentos", legalName: "Vale Azul Alimentos Exportação LTDA", taxId: "89.012.345/0001-66", contactName: "Camila", contactLastName: "Ferreira", jobTitle: "Diretora Comercial", status: "Em contato", urgency: "Médio", modal: "Marítimo", score: 48, source: "Indicação" },
-  { companyName: "Pampa Rodas", legalName: "Pampa Rodas Transportes LTDA", taxId: "90.123.456/0001-77", contactName: "Eduardo", contactLastName: "Martins", jobTitle: "Comprador", status: "Em negociação", urgency: "Crítico", modal: "Rodoviário", score: 82, source: "Evento" },
+  { companyName: "Vale Azul Alimentos", legalName: "Vale Azul Alimentos Exportação LTDA", taxId: "89.012.345/0001-66", contactName: "Camila", contactLastName: "Ferreira", jobTitle: "Diretora Comercial", status: "Contato", urgency: "Médio", modal: "Marítimo", score: 48, source: "Indicação" },
+  { companyName: "Pampa Rodas", legalName: "Pampa Rodas Transportes LTDA", taxId: "90.123.456/0001-77", contactName: "Eduardo", contactLastName: "Martins", jobTitle: "Comprador", status: "Negociação", urgency: "Crítico", modal: "Rodoviário", score: 82, source: "Evento" },
   { companyName: "Cristal Vidros", legalName: "Cristal Vidros do Brasil LTDA", taxId: "01.234.567/0001-88", contactName: "Fernanda", contactLastName: "Lima", jobTitle: "Analista de Importação", status: "Perdido", urgency: "Baixo", modal: "Aéreo", score: 22, source: "Online" },
 ];
 

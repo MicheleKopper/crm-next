@@ -79,7 +79,7 @@ export function QualificationForm({
         </div>
 
         <div>
-          <Label>Volume Estimado</Label>
+          <Label>Volume estimado</Label>
           <Input type="number" min={1} {...register("estimatedVolume")} />
         </div>
 
@@ -107,7 +107,7 @@ export function QualificationForm({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div>
-          <Label>Desafio Atual</Label>
+          <Label>Desafio atual</Label>
           <Textarea rows={3} {...register("painIdentified")} />
         </div>
         <div>
@@ -115,7 +115,7 @@ export function QualificationForm({
           <Textarea rows={3} {...register("interest")} />
         </div>
         <div>
-          <Label>Motivo de Desqualificação</Label>
+          <Label>Motivo de desqualificação</Label>
           <Textarea rows={3} {...register("disqualificationReason")} />
         </div>
       </div>

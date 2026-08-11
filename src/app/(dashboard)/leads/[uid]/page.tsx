@@ -1,18 +1,20 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { LeadStatusBadge, ScoreBadge, UrgencyBadge } from "@/components/ui/badge";
 import { getSession } from "@/server/auth/session";
 import { getLeadByUid, listOperators } from "@/server/modules/leads/lead.service";
 import { NotFoundError } from "@/server/shared/errors";
 
 import { ActivitiesTab } from "./activities-tab";
 import { ContactSection } from "./contact-section";
-import { DeleteLeadTrigger } from "./delete-lead-trigger";
+import { LeadActionsMenu } from "./lead-actions-menu";
 import { LeadDetailTabs } from "./lead-detail-tabs";
 import { LeadInfoSection } from "./lead-info-section";
+import { LeadStatusPicker } from "./lead-status-picker";
 import { OpportunitiesTab } from "./opportunities-tab";
 import { QualificationSection } from "./qualification-section";
+import { ScorePicker } from "./score-picker";
+import { UrgencyPicker } from "./urgency-picker";
 
 function getInitials(name: string) {
   const words = name.trim().split(/\s+/).filter(Boolean);
@@ -41,6 +43,7 @@ export default async function LeadDetailPage({
   const canEdit = Boolean(session.permissions?.leads_edit);
   const canDelete = Boolean(session.permissions?.leads_delete);
   const leadFullName = lead.contact?.fullName || lead.displayName;
+  const jobTitle = lead.contact?.jobTitle;
 
   return (
     <div className="space-y-6">
@@ -48,7 +51,7 @@ export default async function LeadDetailPage({
         <Link href="/leads" className="hover:underline">
           Leads
         </Link>{" "}
-        &gt; {leadFullName}
+        &gt; Detalhes
       </p>
 
       <div className="flex items-start justify-between gap-4">
@@ -57,40 +60,46 @@ export default async function LeadDetailPage({
             {getInitials(leadFullName)}
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-navy-900">
-                {leadFullName}
-              </h1>
-              <LeadStatusBadge status={lead.status} />
-            </div>
+            <h1 className="text-2xl font-bold text-navy-900">
+              {leadFullName}
+            </h1>
             <p className="mt-1 text-sm text-navy-500">
               {lead.displayName}
-              {lead.legalName && lead.legalName !== lead.displayName
-                ? ` · ${lead.legalName}`
-                : ""}
+              {jobTitle ? ` · ${jobTitle}` : ""}
             </p>
+            <div className="mt-1 flex items-center gap-2">
+              <LeadStatusPicker
+                uid={lead.uid}
+                status={lead.status}
+                canEdit={canEdit}
+              />
+              <ScorePicker uid={lead.uid} score={lead.score} canEdit={canEdit} />
+              <UrgencyPicker
+                uid={lead.uid}
+                urgency={lead.urgency}
+                canEdit={canEdit}
+              />
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <ScoreBadge score={lead.score} />
-          <UrgencyBadge urgency={lead.urgency} />
-          {canDelete && (
-            <DeleteLeadTrigger uid={lead.uid} displayName={leadFullName} />
-          )}
-        </div>
+        <LeadActionsMenu
+          uid={lead.uid}
+          displayName={leadFullName}
+          canDelete={canDelete}
+        />
       </div>
 
       <LeadDetailTabs
-        detailsPanel={
-          <div>
-            <LeadInfoSection lead={lead} operators={operators} canEdit={canEdit} />
-            <QualificationSection lead={lead} canEdit={canEdit} />
-            <ContactSection lead={lead} canEdit={canEdit} />
-          </div>
+        leadSection={
+          <LeadInfoSection lead={lead} operators={operators} canEdit={canEdit} />
         }
+        qualificationSection={
+          <QualificationSection lead={lead} canEdit={canEdit} />
+        }
+        contactSection={<ContactSection lead={lead} canEdit={canEdit} />}
         opportunitiesPanel={<OpportunitiesTab />}
-        activitiesPanel={<ActivitiesTab leadFullName={leadFullName} />}
+        activitiesPanel={<ActivitiesTab />}
       />
 
       <Link

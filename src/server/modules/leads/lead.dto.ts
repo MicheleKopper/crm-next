@@ -2,8 +2,8 @@ import { z } from "zod";
 
 export const LEAD_STATUSES = [
   "Novo",
-  "Em contato",
-  "Em negociação",
+  "Contato",
+  "Negociação",
   "Convertido",
   "Perdido",
 ] as const;

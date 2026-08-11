@@ -7,7 +7,7 @@ import type { CustomerListRow } from "@/server/modules/customers/customer.reposi
 const COLUMNS = [
   "Status",
   "Nome",
-  "Razão Social",
+  "Razão social",
   "Segmento",
   "Porte",
   "Potencial",

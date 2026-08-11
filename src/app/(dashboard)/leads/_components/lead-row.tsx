@@ -41,7 +41,7 @@ export function LeadRow({ lead }: { lead: LeadListRow }) {
       <div className="grid min-w-0 grid-cols-[auto_1fr] gap-x-2 gap-y-1 text-sm">
         <MetaField label="Responsável" value={lead.operatorFullName} />
         <MetaField
-          label="Última Interação"
+          label="Última interação"
           value={
             lead.lastInteractionAt
               ? new Date(lead.lastInteractionAt).toLocaleDateString("pt-BR")

@@ -11,7 +11,7 @@ const COLUMNS = [
   "Urgência",
   "Modal",
   "Responsável",
-  "Última Interação",
+  "Última interação",
 ];
 
 export function LeadTableView({ items }: { items: LeadListRow[] }) {

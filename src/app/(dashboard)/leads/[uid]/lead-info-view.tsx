@@ -11,14 +11,14 @@ export function LeadInfoView({ lead }: { lead: LeadDetail }) {
     <div className="grid grid-cols-1 gap-x-8 gap-y-2.5 sm:grid-cols-2">
       <DetailField label="Status" value={lead.status} />
       <DetailField label="Responsável" value={lead.operatorFullName} />
-      <DetailField label="Razão Social" value={lead.legalName} />
+      <DetailField label="Razão social" value={lead.legalName} />
       <DetailField label="Origem" value={lead.source} />
       <DetailField label="Campanha" value={lead.campaign} />
       <DetailField label="Urgência" value={lead.urgency} />
       <DetailField label="Score" value={lead.score} />
-      <DetailField label="Data de Entrada" value={formatDate(lead.createdAt)} />
+      <DetailField label="Data de entrada" value={formatDate(lead.createdAt)} />
       <DetailField
-        label="Última Interação"
+        label="Última interação"
         value={formatDate(lead.lastInteractionAt)}
       />
       <DetailField label="Convertido em" value={formatDate(lead.convertedAt)} />

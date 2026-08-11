@@ -195,7 +195,7 @@ export function CreateCustomerDrawer({
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field
                     htmlFor="legalName"
-                    label="Razão Social"
+                    label="Razão social"
                     required
                     error={errors.legalName?.message}
                   >
@@ -203,7 +203,7 @@ export function CreateCustomerDrawer({
                   </Field>
                   <Field
                     htmlFor="displayName"
-                    label="Nome Fantasia"
+                    label="Nome fantasia"
                     required
                     error={errors.displayName?.message}
                   >
@@ -263,7 +263,7 @@ export function CreateCustomerDrawer({
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field
                     htmlFor="postalCode"
-                    label={isForeignCompany ? "Código Postal" : "CEP"}
+                    label={isForeignCompany ? "Código postal" : "CEP"}
                     required
                     error={errors.postalCode?.message}
                   >
@@ -271,7 +271,7 @@ export function CreateCustomerDrawer({
                   </Field>
                   <Field
                     htmlFor="state"
-                    label={isForeignCompany ? "State / Province" : "Estado"}
+                    label={isForeignCompany ? "State / province" : "Estado"}
                     required
                     error={errors.state?.message}
                   >
@@ -334,7 +334,7 @@ export function CreateCustomerDrawer({
                   </Field>
                   <Field
                     htmlFor="sourceSpecify"
-                    label="Especifique a Origem"
+                    label="Especifique a origem"
                     required
                     error={errors.sourceSpecify?.message}
                   >
@@ -395,7 +395,7 @@ export function CreateCustomerDrawer({
                   </Field>
                   <Field
                     htmlFor="accountPotential"
-                    label="Potencial da Conta"
+                    label="Potencial da conta"
                     required
                     error={errors.accountPotential?.message}
                   >
@@ -416,7 +416,7 @@ export function CreateCustomerDrawer({
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field
                     htmlFor="cargoType"
-                    label="Tipo de Carga"
+                    label="Tipo de carga"
                     required
                     error={errors.cargoType?.message}
                   >
@@ -458,7 +458,7 @@ export function CreateCustomerDrawer({
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <Field
                     htmlFor="estimatedVolume"
-                    label="Volume Estimado"
+                    label="Volume estimado"
                     required
                     error={errors.estimatedVolume?.message}
                   >
@@ -508,14 +508,14 @@ export function CreateCustomerDrawer({
           {step === 3 && (
             <div className="space-y-6">
               <Section icon={Route} title="Detalhes operacionais">
-                <Field htmlFor="mainRoutes" label="Rotas Principais">
+                <Field htmlFor="mainRoutes" label="Rotas principais">
                   <Input
                     id="mainRoutes"
                     placeholder="Ex: SHA-ITJ, MIA-GRU"
                     {...register("mainRoutes")}
                   />
                 </Field>
-                <Field htmlFor="restrictions" label="Restrições Operacionais">
+                <Field htmlFor="restrictions" label="Restrições operacionais">
                   <Textarea id="restrictions" rows={3} {...register("restrictions")} />
                 </Field>
               </Section>
