@@ -60,7 +60,7 @@ const NAV_GROUPS: NavGroup[] = [
     key: "inventario",
     label: "Inventário",
     icon: Archive,
-    items: [{ label: "Purchase Orders" }, { label: "Flexitanks" }],
+    items: [{ label: "Purchase Orders" }, { label: "Flexitanks", href: "/flexitanks" }],
   },
   {
     key: "financeiro",

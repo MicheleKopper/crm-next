@@ -40,7 +40,7 @@ model Company {
   postalCode   String?  @map("postal_code")
   /// Entity types this company record represents, e.g. ["Customer"]
   companyType  Json     @map("company_type")
-  ownerId      String?  @db.Uuid @map("owner_id")
+  ownerId      String?  @map("owner_id") @db.Uuid
   owner        User?    @relation("CompanyOwner", fields: [ownerId], references: [id])
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
@@ -49,12 +49,19 @@ model Company {
   leads           Lead[]
   contacts        Contact[]
 
+  flexitankLocations      Flexitank[]      @relation("FlexitankLocation")
+  shipmentsAsCustomer     Shipment[]       @relation("ShipmentCustomer")
+  shipmentsAsShipper      Shipment[]       @relation("ShipmentShipper")
+  shipmentsAsConsignee    Shipment[]       @relation("ShipmentConsignee")
+  shipmentsAsShippingLine Shipment[]       @relation("ShipmentShippingLine")
+  flexitankDepots         FlexitankDepot[]
+
   @@map("companies")
 }
 
 model CustomerProfile {
   id               String   @id @default(uuid()) @db.Uuid
-  customerId       String   @unique @db.Uuid @map("customer_id")
+  customerId       String   @unique @map("customer_id") @db.Uuid
   company          Company  @relation(fields: [customerId], references: [id], onDelete: Cascade)
   segment          String?
   size             String?
@@ -78,11 +85,11 @@ model CustomerProfile {
 
 model Lead {
   id                     String    @id @default(uuid()) @db.Uuid
-  customerId             String    @db.Uuid @map("customer_id")
+  customerId             String    @map("customer_id") @db.Uuid
   customer               Company   @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  contactId              String?   @db.Uuid @map("contact_id")
+  contactId              String?   @map("contact_id") @db.Uuid
   contact                Contact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
-  operatorId             String?   @db.Uuid @map("operator_id")
+  operatorId             String?   @map("operator_id") @db.Uuid
   operator               User?     @relation("LeadOperator", fields: [operatorId], references: [id])
   status                 String    @default("Novo")
   source                 String
@@ -108,7 +115,7 @@ model Lead {
 /// reused across multiple leads — mirrors the standalone "Contatos" module.
 model Contact {
   id          String    @id @default(uuid()) @db.Uuid
-  companyId   String    @db.Uuid @map("company_id")
+  companyId   String    @map("company_id") @db.Uuid
   company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
   firstName   String    @map("first_name")
   lastName    String    @map("last_name")
@@ -128,4 +135,139 @@ model Contact {
   leads Lead[]
 
   @@map("contacts")
+}
+
+model Port {
+  id          String   @id @default(uuid()) @db.Uuid
+  portName    String?  @map("port_name")
+  portCode    String?  @map("port_code")
+  countryName String?  @map("country_name")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  loadShipments      Shipment[]       @relation("ShipmentPortLoad")
+  dischargeShipments Shipment[]       @relation("ShipmentPortDischarge")
+  depots             FlexitankDepot[]
+
+  @@map("ports")
+}
+
+/// Minimal subset of the legacy `products` table — only what Flexitank details need.
+model Product {
+  id          String   @id @default(uuid()) @db.Uuid
+  productName String?  @map("product_name")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  shipments Shipment[]
+
+  @@map("products")
+}
+
+/// Minimal subset of the legacy `purchase_orders` table — only what Flexitank details need.
+model PurchaseOrder {
+  id                  String    @id @default(uuid()) @db.Uuid
+  poNumber            String?   @map("po_number")
+  tempAdmissionNumber String?   @map("temp_admission_number")
+  tempAdmissionDate   DateTime? @map("temp_admission_date")
+  clearenceDate       DateTime? @map("clearence_date")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  flexitanks Flexitank[]
+
+  @@map("purchase_orders")
+}
+
+/// Minimal subset of the legacy `shipments` table — only what Flexitank details need.
+model Shipment {
+  id               String    @id @default(uuid()) @db.Uuid
+  booking          String?
+  sslBookingNumber String?   @map("ssl_booking_number")
+  customerId       String?   @map("customer_id") @db.Uuid
+  customer         Company?  @relation("ShipmentCustomer", fields: [customerId], references: [id])
+  shipperId        String?   @map("shipper_id") @db.Uuid
+  shipper          Company?  @relation("ShipmentShipper", fields: [shipperId], references: [id])
+  consigneeId      String?   @map("consignee_id") @db.Uuid
+  consignee        Company?  @relation("ShipmentConsignee", fields: [consigneeId], references: [id])
+  shippingLineId   String?   @map("shipping_line_id") @db.Uuid
+  shippingLine     Company?  @relation("ShipmentShippingLine", fields: [shippingLineId], references: [id])
+  productId        String?   @map("product_id") @db.Uuid
+  product          Product?  @relation(fields: [productId], references: [id])
+  portLoadId       String?   @map("port_load_id") @db.Uuid
+  portLoad         Port?     @relation("ShipmentPortLoad", fields: [portLoadId], references: [id])
+  portDischargeId  String?   @map("port_discharge_id") @db.Uuid
+  portDischarge    Port?     @relation("ShipmentPortDischarge", fields: [portDischargeId], references: [id])
+  vessel           String?
+  voyage           String?
+  etd              DateTime?
+  atd              DateTime?
+  eta              DateTime?
+  ata              DateTime?
+  mblNumber        String?   @map("mbl_number")
+  hblNumber        String?   @map("hbl_number")
+  status           String?
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  flexitanks Flexitank[]
+  containers Container[]
+
+  @@map("shipments")
+}
+
+/// Physical container/equipment linked to a Flexitank — origin of container, tara,
+/// lacre, fitting and loading fields on the Flexitank details page.
+model Container {
+  id              String     @id @default(uuid()) @db.Uuid
+  containerNumber String?    @map("container")
+  tare            Int?
+  seal            String?
+  fitting         String?
+  loading         String?
+  netWeight       String?    @map("net_weight")
+  flexitankId     String?    @map("flexitank_id") @db.Uuid
+  flexitank       Flexitank? @relation(fields: [flexitankId], references: [id])
+  shipmentId      String?    @map("shipment_id") @db.Uuid
+  shipment        Shipment?  @relation(fields: [shipmentId], references: [id])
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  @@map("containers")
+}
+
+model Flexitank {
+  id              String         @id @default(uuid()) @db.Uuid
+  serialNumber    String         @map("serial_number")
+  fhbStock        String?        @map("fhb_stock")
+  size            String
+  price           Float
+  locationId      String?        @map("location_id") @db.Uuid
+  location        Company?       @relation("FlexitankLocation", fields: [locationId], references: [id])
+  purchaseOrderId String?        @map("purchase_order_id") @db.Uuid
+  purchaseOrder   PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id])
+  shipmentId      String?        @map("shipment_id") @db.Uuid
+  shipment        Shipment?      @relation(fields: [shipmentId], references: [id])
+  comment         String?
+  status          String         @default("Available")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  containers Container[]
+
+  @@map("flexitanks")
+}
+
+/// Maps a warehouse/terminal Company to the Port it operates at — used to build
+/// the Porto x Empresa inventory summary.
+model FlexitankDepot {
+  id        String   @id @default(uuid()) @db.Uuid
+  portId    String?  @map("port_id") @db.Uuid
+  port      Port?    @relation(fields: [portId], references: [id])
+  companyId String?  @map("company_id") @db.Uuid
+  company   Company? @relation(fields: [companyId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("flexitank_depot")
 }

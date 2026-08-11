@@ -9,7 +9,8 @@ export type PermissionKey =
   | "customers_delete"
   | "leads_create"
   | "leads_edit"
-  | "leads_delete";
+  | "leads_delete"
+  | "flexitanks_edit";
 
 export async function requireSession(): Promise<SessionPayload> {
   const session = await getSession();

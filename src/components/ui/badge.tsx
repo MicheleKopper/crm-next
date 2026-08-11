@@ -66,6 +66,36 @@ export function UrgencyBadge({ urgency }: { urgency: string | null }) {
   );
 }
 
+const FLEXITANK_STATUS_CLASSES: Record<string, string> = {
+  Available: "bg-status-ativo/10 text-status-ativo",
+  Used: "bg-status-warning/10 text-status-warning",
+  Waiting: "bg-navy-500/10 text-navy-700",
+  Damaged: "bg-status-perdido/10 text-status-perdido",
+};
+
+export function FlexitankStatusBadge({ status }: { status: string | null }) {
+  const label = status ?? "Available";
+  return (
+    <span
+      className={cn(
+        "inline-flex w-fit items-center rounded-full px-2.5 py-1 text-xs font-semibold",
+        FLEXITANK_STATUS_CLASSES[label] ?? "bg-navy-100 text-navy-500"
+      )}
+    >
+      {label}
+    </span>
+  );
+}
+
+export function FlexitankSizeBadge({ size }: { size: string | null }) {
+  if (!size) return null;
+  return (
+    <span className="inline-flex w-fit items-center rounded-full bg-status-lead/10 px-2.5 py-1 text-xs font-semibold text-status-lead">
+      {size}
+    </span>
+  );
+}
+
 export function ScoreBadge({ score }: { score: number | null }) {
   if (score === null) return null;
   return (

@@ -15,6 +15,7 @@ const ADMIN_PERMISSIONS = {
   leads_create: true,
   leads_edit: true,
   leads_delete: true,
+  flexitanks_edit: true,
 };
 
 const COMMERCIAL_PERMISSIONS = {
@@ -24,6 +25,7 @@ const COMMERCIAL_PERMISSIONS = {
   leads_create: true,
   leads_edit: true,
   leads_delete: false,
+  flexitanks_edit: true,
 };
 
 type SeedCustomer = {
@@ -211,9 +213,180 @@ async function main() {
     });
   }
 
+  await seedFlexitanks();
+
   console.log("Seed concluído.");
   console.log("Login admin: admin@crm.local / admin123");
   console.log("Login comercial: comercial@crm.local / comercial123");
+}
+
+type SeedDepot = {
+  portName: string;
+  portCode: string;
+  companyDisplayName: string;
+  companyLegalName: string;
+};
+
+const DEPOTS: SeedDepot[] = [
+  { portName: "PARANAGUA", portCode: "PNG", companyDisplayName: "MULTIPORTLOG", companyLegalName: "MULTIPORTLOG TERMINAIS LTDA" },
+  { portName: "SANTOS", portCode: "SSZ", companyDisplayName: "SIGMA", companyLegalName: "SIGMA TRANSPORTES E LOGISTICA LTDA" },
+  { portName: "SALVADOR", portCode: "SSA", companyDisplayName: "JOSÉ RUBEM", companyLegalName: "José Rubem Transportes e Equipamentos Ltda." },
+  { portName: "RIO GRANDE", portCode: "RIG", companyDisplayName: "DAR (Rio Grande)", companyLegalName: "D A R Transportes e Comercio LTDA" },
+  { portName: "SAO SEBASTIAO", portCode: "SSO", companyDisplayName: "D.A.R.", companyLegalName: "D A R Transportes e Comercio LTDA" },
+];
+
+type SeedFlexitank = {
+  serialNumber: string;
+  fhbStock: string;
+  size: string;
+  price: number;
+  status: "Available" | "Used" | "Waiting" | "Damaged";
+  depotIndex: number;
+  poNumber?: string;
+  tempAdmissionNumber?: string;
+  container?: string;
+  tare?: number;
+  seal?: string;
+  netWeight?: string;
+};
+
+const FLEXITANKS: SeedFlexitank[] = [
+  { serialNumber: "FHB19-325CG0171", fhbStock: "M938783250150011", size: "19kl", price: 410, status: "Available", depotIndex: 1, poNumber: "BRFPO25002", tempAdmissionNumber: "13032.425193/2025-49" },
+  { serialNumber: "FHB19-325CG0211", fhbStock: "M938783250150012", size: "19kl", price: 410, status: "Available", depotIndex: 1, poNumber: "BRFPO25002", tempAdmissionNumber: "13032.425193/2025-49" },
+  { serialNumber: "FHB20-322PB057", fhbStock: "M938783220150004", size: "20kl", price: 2503, status: "Available", depotIndex: 0, poNumber: "BRFPO22001", tempAdmissionNumber: "13033.164829/2022-18" },
+  { serialNumber: "FHB19-321RI295", fhbStock: "M938783210850007", size: "19kl", price: 346, status: "Available", depotIndex: 0, poNumber: "BRFPO21007", tempAdmissionNumber: "13033.769889/2021-41" },
+  { serialNumber: "FHB19-325BX0137", fhbStock: "M938783250150013", size: "19kl", price: 410, status: "Available", depotIndex: 1, poNumber: "BRFPO25001", tempAdmissionNumber: "13032.425296/2025-17" },
+  { serialNumber: "FHB21-321RI241", fhbStock: "M938783210850008", size: "21kl", price: 480, status: "Available", depotIndex: 1, poNumber: "BRFPO21007", tempAdmissionNumber: "13033.769889/2021-41" },
+  { serialNumber: "FHB19-321R9090", fhbStock: "M938783210850009", size: "19kl", price: 346, status: "Available", depotIndex: 0, poNumber: "BRFPO21009", tempAdmissionNumber: "13033.014327/2022-47" },
+  { serialNumber: "FHB24-322GU185", fhbStock: "M938783221050002", size: "24kl", price: 445, status: "Used", depotIndex: 0, container: "TCLU9026513", tare: 3740, seal: "0556531", netWeight: "26850" },
+  { serialNumber: "FHB24-324KN249", fhbStock: "M938783250150001", size: "24kl", price: 433, status: "Used", depotIndex: 1, container: "TRHU2077269", tare: 2180, seal: "L9582528", netWeight: "22750" },
+  { serialNumber: "FHB24-325GC0488", fhbStock: "M938783250550008", size: "24kl", price: 367, status: "Used", depotIndex: 1, container: "ECMU2851080", tare: 2160, seal: "K0987506", netWeight: "21520" },
+  { serialNumber: "FHB22-325CG0172", fhbStock: "M938783250150014", size: "22kl", price: 420, status: "Waiting", depotIndex: 3, poNumber: "BRFPO25002", tempAdmissionNumber: "13032.425193/2025-49" },
+  { serialNumber: "FHB23-321R9091", fhbStock: "M938783210850010", size: "23kl", price: 495, status: "Damaged", depotIndex: 4, poNumber: "BRFPO21009", tempAdmissionNumber: "13033.014327/2022-47" },
+];
+
+async function seedFlexitanks() {
+  const existingFlexitank = await prisma.flexitank.findFirst();
+  if (existingFlexitank) return;
+
+  const depotRefs = [];
+  for (const depot of DEPOTS) {
+    let port = await prisma.port.findFirst({ where: { portCode: depot.portCode } });
+    if (!port) {
+      port = await prisma.port.create({
+        data: { portName: depot.portName, portCode: depot.portCode, countryName: "BRAZIL" },
+      });
+    }
+
+    let company = await prisma.company.findFirst({ where: { displayName: depot.companyDisplayName } });
+    if (!company) {
+      company = await prisma.company.create({
+        data: {
+          displayName: depot.companyDisplayName,
+          legalName: depot.companyLegalName,
+          taxId: `WAREHOUSE-${depot.portCode}`,
+          foreignValue: false,
+          country: "BRAZIL",
+          companyType: ["Warehouse / Terminal"],
+        },
+      });
+    }
+
+    const existingDepot = await prisma.flexitankDepot.findFirst({
+      where: { portId: port.id, companyId: company.id },
+    });
+    if (!existingDepot) {
+      await prisma.flexitankDepot.create({ data: { portId: port.id, companyId: company.id } });
+    }
+
+    depotRefs.push({ port, company });
+  }
+
+  const [product, shippingLine, shipper, consignee, customer] = await Promise.all([
+    prisma.product.create({ data: { productName: "Crude Glycerin" } }),
+    prisma.company.create({
+      data: { displayName: "MAERSK", legalName: "MAERSK", taxId: "MAERSK-SHIPPING-LINE", foreignValue: false, country: "BRAZIL", companyType: ["Shipping Line"] },
+    }),
+    prisma.company.create({
+      data: { displayName: "AGROFORTE", legalName: "AGROFORTE INDÚSTRIA, COMÉRCIO E TRANSPORTE LTDA", taxId: "SHIPPER-AGROFORTE", foreignValue: false, country: "BRAZIL", companyType: ["Shipper"] },
+    }),
+    prisma.company.create({
+      data: { displayName: "STX COMMODITIES", legalName: "STX COMMODITIES BV", taxId: "CONSIGNEE-STX", foreignValue: true, country: "NETHERLANDS", companyType: ["Consignee"] },
+    }),
+    prisma.company.create({
+      data: { displayName: "Global Grains Co.", legalName: "Global Grains Company Inc.", taxId: "CUSTOMER-GLOBALGRAINS", foreignValue: true, country: "UNITED STATES", companyType: ["Customer"] },
+    }),
+  ]);
+
+  const purchaseOrders = new Map<string, string>();
+  for (const flexitank of FLEXITANKS) {
+    if (!flexitank.poNumber || purchaseOrders.has(flexitank.poNumber)) continue;
+    const po = await prisma.purchaseOrder.create({
+      data: {
+        poNumber: flexitank.poNumber,
+        tempAdmissionNumber: flexitank.tempAdmissionNumber,
+        tempAdmissionDate: new Date("2025-03-07"),
+        clearenceDate: new Date("2025-06-09"),
+      },
+    });
+    purchaseOrders.set(flexitank.poNumber, po.id);
+  }
+
+  const shipment = await prisma.shipment.create({
+    data: {
+      booking: "262999684",
+      sslBookingNumber: "262999684",
+      customerId: customer.id,
+      shipperId: shipper.id,
+      consigneeId: consignee.id,
+      shippingLineId: shippingLine.id,
+      productId: product.id,
+      portLoadId: depotRefs[1].port.id,
+      portDischargeId: depotRefs[0].port.id,
+      vessel: "MAERSK LEON",
+      voyage: "604N",
+      etd: new Date("2026-01-16"),
+      atd: new Date("2026-01-22"),
+      eta: new Date("2026-02-26"),
+      mblNumber: "MEDUFX129465",
+      hblNumber: "COLAAL260007",
+      status: "Booked",
+    },
+  });
+
+  for (const flexitank of FLEXITANKS) {
+    const depot = depotRefs[flexitank.depotIndex];
+    const created = await prisma.flexitank.create({
+      data: {
+        serialNumber: flexitank.serialNumber,
+        fhbStock: flexitank.fhbStock,
+        size: flexitank.size,
+        price: flexitank.price,
+        status: flexitank.status,
+        locationId: flexitank.status === "Available" || flexitank.status === "Waiting" || flexitank.status === "Damaged" ? depot.company.id : null,
+        purchaseOrderId: flexitank.poNumber ? purchaseOrders.get(flexitank.poNumber) : null,
+        shipmentId: flexitank.status === "Used" ? shipment.id : null,
+        comment: flexitank.status === "Damaged" ? "Lona rasgada durante o descarregamento." : null,
+      },
+    });
+
+    if (flexitank.container) {
+      await prisma.container.create({
+        data: {
+          containerNumber: flexitank.container,
+          tare: flexitank.tare,
+          seal: flexitank.seal,
+          netWeight: flexitank.netWeight,
+          fitting: "12/01/2026",
+          loading: "14/01/2026",
+          flexitankId: created.id,
+          shipmentId: shipment.id,
+        },
+      });
+    }
+  }
+
+  console.log("Flexitanks seed concluído.");
 }
 
 main()
