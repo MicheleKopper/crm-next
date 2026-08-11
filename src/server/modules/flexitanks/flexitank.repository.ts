@@ -34,8 +34,9 @@ const SORT_COLUMNS: Record<ListFlexitanksQuery["sortBy"], Prisma.Sql> = {
 export async function listFlexitanks(
   query: ListFlexitanksQuery
 ): Promise<{ items: FlexitankListRow[]; totalCount: number }> {
-  const conditions = [Prisma.sql`f."status" = 'Available'`];
+  const conditions: Prisma.Sql[] = [];
 
+  if (query.status) conditions.push(Prisma.sql`f."status" = ${query.status}`);
   if (query.search) {
     const pattern = `%${query.search}%`;
     conditions.push(Prisma.sql`(
@@ -52,7 +53,8 @@ export async function listFlexitanks(
   if (query.booking)
     conditions.push(Prisma.sql`sh."booking" ILIKE ${`%${query.booking}%`}`);
 
-  const where = Prisma.join(conditions, " AND ");
+  const where =
+    conditions.length > 0 ? Prisma.join(conditions, " AND ") : Prisma.sql`TRUE`;
   const sortColumn = SORT_COLUMNS[query.sortBy];
   const sortDirection = query.sortDir === "desc" ? Prisma.sql`DESC` : Prisma.sql`ASC`;
 
@@ -77,7 +79,7 @@ export async function listFlexitanks(
       LEFT JOIN "shipments" sh ON sh."id" = f."shipment_id"
       LEFT JOIN "containers" c ON c."flexitank_id" = f."id"
       WHERE ${where}
-      ORDER BY ${sortColumn} ${sortDirection} NULLS LAST, f."created_at" DESC
+      ORDER BY (f."status" = 'Available') DESC, ${sortColumn} ${sortDirection} NULLS LAST, f."created_at" DESC
       LIMIT ${query.limit}
       OFFSET ${query.offset}
     `
@@ -239,8 +241,7 @@ export async function findFlexitanksForExport(
       LEFT JOIN "companies" co ON co."id" = f."location_id"
       LEFT JOIN "purchase_orders" po ON po."id" = f."purchase_order_id"
       LEFT JOIN "shipments" sh ON sh."id" = f."shipment_id"
-      WHERE f."status" = 'Available'
-        AND f."created_at" >= ${query.from}::date
+      WHERE f."created_at" >= ${query.from}::date
         AND f."created_at" < (${query.until}::date + interval '1 day')
       ORDER BY f."created_at" DESC
     `

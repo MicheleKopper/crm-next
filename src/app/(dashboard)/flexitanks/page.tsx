@@ -21,10 +21,18 @@ export default async function FlexitanksPage({
 }: PageProps<"/flexitanks">) {
   const rawParams = await searchParams;
   const query = listFlexitanksQuerySchema.parse(rawParams);
+  const hasActiveFilters = Boolean(
+    query.search ||
+      query.status ||
+      query.size ||
+      query.locationId ||
+      query.poNumber ||
+      query.booking
+  );
 
   const [{ items, totalCount }, counterRows, locations] = await Promise.all([
     getFlexitankList(query),
-    getFlexitankCounter(),
+    hasActiveFilters ? Promise.resolve([]) : getFlexitankCounter(),
     listLocations(),
   ]);
 
@@ -62,7 +70,7 @@ export default async function FlexitanksPage({
           </div>
         </div>
 
-        <SummarySection counterRows={counterRows} />
+        {!hasActiveFilters && <SummarySection counterRows={counterRows} />}
 
         <div className="rounded-xl bg-white p-6 shadow-sm">
           <FlexitankListBody items={items} />

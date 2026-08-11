@@ -9,9 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Modal } from "@/components/ui/modal";
 import { Select } from "@/components/ui/select";
-import { FLEXITANK_SIZES } from "@/server/modules/flexitanks/flexitank.dto";
+import {
+  FLEXITANK_SIZES,
+  FLEXITANK_STATUSES,
+} from "@/server/modules/flexitanks/flexitank.dto";
 
-const FILTER_KEYS = ["size", "locationId", "poNumber", "booking"];
+const FILTER_KEYS = ["status", "size", "locationId", "poNumber", "booking"];
 
 export function FilterModal({
   locations,
@@ -78,6 +81,22 @@ export function FilterModal({
 
       <Modal open={open} onClose={() => setOpen(false)} title="Filtrar flexitanks">
         <form action={(formData) => apply(formData)} className="space-y-4">
+          <div>
+            <Label htmlFor="filter-status">Status</Label>
+            <Select
+              id="filter-status"
+              name="status"
+              defaultValue={searchParams.get("status") ?? ""}
+            >
+              <option value="">Todos</option>
+              {FLEXITANK_STATUSES.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </Select>
+          </div>
+
           <div>
             <Label htmlFor="filter-size">Tamanho</Label>
             <Select

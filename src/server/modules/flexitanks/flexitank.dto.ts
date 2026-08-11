@@ -30,6 +30,7 @@ export const listFlexitanksQuerySchema = z.object({
   search: z.string().trim().optional(),
   limit: z.coerce.number().int().min(1).max(100).default(10),
   offset: z.coerce.number().int().min(0).default(0),
+  status: z.enum(FLEXITANK_STATUSES).optional(),
   size: z.string().optional(),
   locationId: z.string().uuid().optional(),
   poNumber: z.string().optional(),

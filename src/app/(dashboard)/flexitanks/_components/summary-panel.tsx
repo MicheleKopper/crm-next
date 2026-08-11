@@ -1,7 +1,9 @@
+import { MapPin } from "lucide-react";
+
 import { FLEXITANK_SIZES } from "@/server/modules/flexitanks/flexitank.dto";
 import type { FlexitankCounterRow } from "@/server/modules/flexitanks/flexitank.repository";
 
-const PORT_NAME_LABELS: Record<string, string> = {
+export const PORT_NAME_LABELS: Record<string, string> = {
   PARANAGUA: "Paranaguá",
   "RIO GRANDE": "Rio Grande",
   SALVADOR: "Salvador",
@@ -9,7 +11,7 @@ const PORT_NAME_LABELS: Record<string, string> = {
   "SAO SEBASTIAO": "São Sebastião",
 };
 
-function formatPortName(portName: string | null) {
+export function formatPortName(portName: string | null) {
   if (!portName) return "—";
   return (
     PORT_NAME_LABELS[portName] ??
@@ -19,21 +21,40 @@ function formatPortName(portName: string | null) {
   );
 }
 
-export function SummaryPanel({
-  counterRows,
-}: {
-  counterRows: FlexitankCounterRow[];
-}) {
-  const activeSizes = FLEXITANK_SIZES.filter((size) =>
+export function getActiveSizes(counterRows: FlexitankCounterRow[]) {
+  return FLEXITANK_SIZES.filter((size) =>
     counterRows.some((row) => row.counts[size] > 0)
   );
+}
+
+export function SummaryPanel({
+  counterRows,
+  hiddenPorts,
+  hiddenCompanies,
+  hiddenSizes,
+}: {
+  counterRows: FlexitankCounterRow[];
+  hiddenPorts: Set<string>;
+  hiddenCompanies: Set<string>;
+  hiddenSizes: Set<string>;
+}) {
+  const activeSizes = getActiveSizes(counterRows);
+  const visibleSizes = activeSizes.filter((size) => !hiddenSizes.has(size));
+  const visibleRows = counterRows.filter(
+    (row) =>
+      !(row.portName && hiddenPorts.has(row.portName)) &&
+      !hiddenCompanies.has(row.companyName)
+  );
+
+  const rowTotal = (row: FlexitankCounterRow) =>
+    visibleSizes.reduce((sum, size) => sum + row.counts[size], 0);
   const grandTotals = Object.fromEntries(
-    activeSizes.map((size) => [
+    visibleSizes.map((size) => [
       size,
-      counterRows.reduce((sum, row) => sum + row.counts[size], 0),
+      visibleRows.reduce((sum, row) => sum + row.counts[size], 0),
     ])
   );
-  const grandTotal = counterRows.reduce((sum, row) => sum + row.total, 0);
+  const grandTotal = visibleRows.reduce((sum, row) => sum + rowTotal(row), 0);
 
   if (counterRows.length === 0) return null;
 
@@ -42,56 +63,77 @@ export function SummaryPanel({
       <table className="w-full text-left text-sm">
         <thead>
           <tr className="border-b border-navy-100 bg-navy-50">
-            <th className="px-4 py-2 text-xs font-semibold uppercase tracking-wide text-navy-400">
+            <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-navy-400">
               Porto
             </th>
-            <th className="px-4 py-2 text-xs font-semibold uppercase tracking-wide text-navy-400">
+            <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-navy-400">
               Empresa
             </th>
-            {activeSizes.map((size) => (
+            {visibleSizes.map((size) => (
               <th
                 key={size}
-                className="px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-navy-400"
+                className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wide text-navy-400"
               >
                 {size}
               </th>
             ))}
-            <th className="px-4 py-2 text-center text-xs font-semibold uppercase tracking-wide text-navy-400">
+            <th className="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-navy-400">
               Total
             </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-navy-100">
-          {counterRows.map((row) => (
-            <tr key={`${row.portName}-${row.companyName}`}>
-              <td className="px-4 py-2 text-navy-900">
-                {formatPortName(row.portName)}
-              </td>
-              <td className="px-4 py-2 text-navy-700">{row.companyName}</td>
-              {activeSizes.map((size) => (
-                <td key={size} className="px-3 py-2 text-center text-navy-700">
-                  {row.counts[size]}
-                </td>
-              ))}
-              <td className="px-4 py-2 text-center font-semibold text-navy-900">
-                {row.total}
+          {visibleRows.length === 0 ? (
+            <tr>
+              <td
+                colSpan={visibleSizes.length + 3}
+                className="px-5 py-6 text-center text-sm text-navy-400"
+              >
+                Nenhum item visível. Ajuste as opções de exibição.
               </td>
             </tr>
-          ))}
+          ) : (
+            visibleRows.map((row) => (
+              <tr
+                key={`${row.portName}-${row.companyName}`}
+                className="hover:bg-navy-50/60"
+              >
+                <td className="px-5 py-3 text-navy-900">
+                  <span className="flex items-center gap-2">
+                    <MapPin size={14} className="text-navy-400" />
+                    {formatPortName(row.portName)}
+                  </span>
+                </td>
+                <td className="px-5 py-3 text-navy-700">{row.companyName}</td>
+                {visibleSizes.map((size) => (
+                  <td key={size} className="px-3 py-3 text-center text-navy-700">
+                    {row.counts[size]}
+                  </td>
+                ))}
+                <td className="px-5 py-3 text-center font-semibold text-navy-900">
+                  {rowTotal(row)}
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
-        <tfoot>
-          <tr className="border-t border-navy-100 bg-navy-50 font-semibold">
-            <td className="px-4 py-2 text-navy-900" colSpan={2}>
-              Total geral
-            </td>
-            {activeSizes.map((size) => (
-              <td key={size} className="px-3 py-2 text-center text-navy-900">
-                {grandTotals[size]}
+        {visibleRows.length > 0 && (
+          <tfoot>
+            <tr className="border-t border-navy-100 bg-navy-100/60 font-semibold">
+              <td className="px-5 py-3 text-navy-900" colSpan={2}>
+                Total geral
               </td>
-            ))}
-            <td className="px-4 py-2 text-center text-navy-900">{grandTotal}</td>
-          </tr>
-        </tfoot>
+              {visibleSizes.map((size) => (
+                <td key={size} className="px-3 py-3 text-center text-navy-900">
+                  {grandTotals[size]}
+                </td>
+              ))}
+              <td className="px-5 py-3 text-center text-navy-900">
+                {grandTotal}
+              </td>
+            </tr>
+          </tfoot>
+        )}
       </table>
     </div>
   );
