@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 import { FlexitankSizeBadge, FlexitankStatusBadge } from "@/components/ui/badge";
+import { CopyButton } from "@/components/ui/copy-button";
 import type { FlexitankListRow } from "@/server/modules/flexitanks/flexitank.repository";
 
 function formatPrice(price: number) {
@@ -17,12 +18,23 @@ export function FlexitankRow({ flexitank }: { flexitank: FlexitankListRow }) {
       <FlexitankStatusBadge status={flexitank.status} />
 
       <div className="min-w-0">
-        <p className="truncate text-sm font-semibold text-navy-900">
-          {flexitank.serialNumber}
-        </p>
-        <p className="mt-0.5 truncate text-xs text-navy-500">
-          {flexitank.poNumber ?? "—"} · {flexitank.locationName ?? "—"}
-        </p>
+        <div className="group flex items-center gap-1">
+          <p className="truncate text-sm font-semibold text-navy-900">
+            {flexitank.serialNumber}
+          </p>
+          <CopyButton value={flexitank.serialNumber} label="número de série" />
+        </div>
+        <div className="mt-0.5 flex items-center gap-1 truncate text-xs text-navy-500">
+          {flexitank.poNumber ? (
+            <span className="group flex min-w-0 items-center gap-1">
+              <span className="truncate">{flexitank.poNumber}</span>
+              <CopyButton value={flexitank.poNumber} label="PO" />
+            </span>
+          ) : (
+            <span>—</span>
+          )}
+          <span className="shrink-0">· {flexitank.locationName ?? "—"}</span>
+        </div>
       </div>
 
       <FlexitankSizeBadge size={flexitank.size} />

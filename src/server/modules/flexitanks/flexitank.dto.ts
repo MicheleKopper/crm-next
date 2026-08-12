@@ -41,8 +41,15 @@ export const listFlexitanksQuerySchema = z.object({
 export type ListFlexitanksQuery = z.infer<typeof listFlexitanksQuerySchema>;
 
 export const exportFlexitanksQuerySchema = z.object({
-  from: z.string().min(1, "Selecione o período!"),
-  until: z.string().min(1, "Selecione o período!"),
+  mode: z.enum(["available", "current"]),
+  search: z.string().trim().optional(),
+  status: z.enum(FLEXITANK_STATUSES).optional(),
+  size: z.string().optional(),
+  locationId: z.string().uuid().optional(),
+  poNumber: z.string().optional(),
+  booking: z.string().optional(),
+  sortBy: z.enum(FLEXITANK_SORT_FIELDS).default("createdAt"),
+  sortDir: z.enum(["asc", "desc"]).default("desc"),
 });
 export type ExportFlexitanksQuery = z.infer<typeof exportFlexitanksQuerySchema>;
 

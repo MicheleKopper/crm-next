@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 import { FlexitankSizeBadge, FlexitankStatusBadge } from "@/components/ui/badge";
+import { CopyButton } from "@/components/ui/copy-button";
 import type { FlexitankListRow } from "@/server/modules/flexitanks/flexitank.repository";
 
 const COLUMNS = ["Status", "Série", "PO", "Localização", "Tamanho", "Preço"];
@@ -29,17 +30,27 @@ export function FlexitankTableView({ items }: { items: FlexitankListRow[] }) {
               <td className="py-3 pr-4">
                 <FlexitankStatusBadge status={flexitank.status} />
               </td>
-              <td
-                className="max-w-[180px] truncate py-3 pr-4 font-semibold text-navy-900"
-                title={flexitank.serialNumber}
-              >
-                {flexitank.serialNumber}
+              <td className="max-w-[180px] py-3 pr-4 font-semibold text-navy-900">
+                <span
+                  className="group flex items-center gap-1"
+                  title={flexitank.serialNumber}
+                >
+                  <span className="truncate">{flexitank.serialNumber}</span>
+                  <CopyButton value={flexitank.serialNumber} label="número de série" />
+                </span>
               </td>
-              <td
-                className="max-w-[140px] truncate py-3 pr-4 text-navy-700"
-                title={flexitank.poNumber ?? undefined}
-              >
-                {flexitank.poNumber || "—"}
+              <td className="max-w-[140px] py-3 pr-4 text-navy-700">
+                {flexitank.poNumber ? (
+                  <span
+                    className="group flex items-center gap-1"
+                    title={flexitank.poNumber}
+                  >
+                    <span className="truncate">{flexitank.poNumber}</span>
+                    <CopyButton value={flexitank.poNumber} label="PO" />
+                  </span>
+                ) : (
+                  "—"
+                )}
               </td>
               <td
                 className="max-w-[160px] truncate py-3 pr-4 text-navy-700"

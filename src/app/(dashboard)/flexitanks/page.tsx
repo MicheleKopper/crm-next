@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { ExportModal } from "@/components/list/export-modal";
 import { SearchBar } from "@/components/list/search-bar";
 import { ViewModeProvider, ViewToggle } from "@/components/list/view-mode";
 import { Pagination } from "@/components/ui/pagination";
@@ -12,6 +11,7 @@ import {
 } from "@/server/modules/flexitanks/flexitank.service";
 
 import { FilterModal } from "./_components/filter-modal";
+import { FlexitankExportMenu } from "./_components/flexitank-export-menu";
 import { FlexitankListBody } from "./_components/flexitank-list-body";
 import { SummarySection } from "./_components/summary-section";
 import { TransferDrawer } from "./_components/transfer-drawer";
@@ -57,14 +57,7 @@ export default async function FlexitanksPage({
               ariaLabel="Buscar flexitanks"
             />
             <FilterModal locations={locations} />
-            <ExportModal
-              exportUrl="/api/flexitanks/export"
-              filenamePrefix="flexitanks"
-              modalTitle="Exportar flexitanks"
-              triggerAriaLabel="Exportar flexitanks"
-              successMessage="Flexitanks exportados com sucesso!"
-              errorMessage="Erro ao exportar flexitanks."
-            />
+            <FlexitankExportMenu />
             <ViewToggle />
             <TransferDrawer locations={locations} />
           </div>

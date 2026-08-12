@@ -14,15 +14,20 @@ import {
 } from "./flexitank.dto";
 import * as flexitankService from "./flexitank.service";
 
-const EXPORT_COLUMNS = [
-  { key: "serialNumber", label: "Série" },
+const AVAILABLE_EXPORT_COLUMNS = [
   { key: "status", label: "Status" },
+  { key: "serialNumber", label: "Série" },
+  { key: "size", label: "Tamanho" },
+  { key: "locationName", label: "Localização" },
+];
+
+const CURRENT_EXPORT_COLUMNS = [
+  { key: "status", label: "Status" },
+  { key: "serialNumber", label: "Série" },
+  { key: "poNumber", label: "PO" },
+  { key: "locationName", label: "Localização" },
   { key: "size", label: "Tamanho" },
   { key: "price", label: "Preço" },
-  { key: "locationName", label: "Localização" },
-  { key: "poNumber", label: "Purchase order" },
-  { key: "booking", label: "Booking" },
-  { key: "createdAt", label: "Criado em" },
 ];
 
 function queryToObject(request: NextRequest) {
@@ -110,12 +115,15 @@ export async function exportFlexitanks(request: NextRequest) {
   try {
     const query = exportFlexitanksQuerySchema.parse(queryToObject(request));
     const rows = await flexitankService.exportFlexitanksCsv(query);
-    const csv = toCsv(rows, EXPORT_COLUMNS);
+    const columns =
+      query.mode === "available" ? AVAILABLE_EXPORT_COLUMNS : CURRENT_EXPORT_COLUMNS;
+    const csv = toCsv(rows, columns);
+    const suffix = query.mode === "available" ? "disponiveis" : "listagem-atual";
     return new NextResponse(csv, {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="flexitanks-${Date.now()}.csv"`,
+        "Content-Disposition": `attachment; filename="flexitanks-${suffix}-${Date.now()}.csv"`,
       },
     });
   } catch (error) {

@@ -31,9 +31,14 @@ const SORT_COLUMNS: Record<ListFlexitanksQuery["sortBy"], Prisma.Sql> = {
   createdAt: Prisma.sql`f."created_at"`,
 };
 
-export async function listFlexitanks(
-  query: ListFlexitanksQuery
-): Promise<{ items: FlexitankListRow[]; totalCount: number }> {
+function buildFlexitankConditions(query: {
+  status?: string;
+  search?: string;
+  size?: string;
+  locationId?: string;
+  poNumber?: string;
+  booking?: string;
+}): Prisma.Sql[] {
   const conditions: Prisma.Sql[] = [];
 
   if (query.status) conditions.push(Prisma.sql`f."status" = ${query.status}`);
@@ -52,6 +57,14 @@ export async function listFlexitanks(
     conditions.push(Prisma.sql`po."po_number" ILIKE ${`%${query.poNumber}%`}`);
   if (query.booking)
     conditions.push(Prisma.sql`sh."booking" ILIKE ${`%${query.booking}%`}`);
+
+  return conditions;
+}
+
+export async function listFlexitanks(
+  query: ListFlexitanksQuery
+): Promise<{ items: FlexitankListRow[]; totalCount: number }> {
+  const conditions = buildFlexitankConditions(query);
 
   const where =
     conditions.length > 0 ? Prisma.join(conditions, " AND ") : Prisma.sql`TRUE`;
@@ -212,38 +225,46 @@ export async function transferFlexitanks(input: TransferFlexitanksInput) {
   });
 }
 
-export type FlexitankExportRow = {
-  serialNumber: string;
-  status: string;
-  size: string;
-  price: number;
-  locationName: string | null;
-  poNumber: string | null;
-  booking: string | null;
-  createdAt: Date;
-};
-
 export async function findFlexitanksForExport(
   query: ExportFlexitanksQuery
-): Promise<FlexitankExportRow[]> {
-  return prisma.$queryRaw<FlexitankExportRow[]>(
+): Promise<Record<string, unknown>[]> {
+  if (query.mode === "available") {
+    return prisma.$queryRaw<Record<string, unknown>[]>(
+      Prisma.sql`
+        SELECT
+          f."status",
+          f."serial_number" AS "serialNumber",
+          f."size",
+          co."display_name" AS "locationName"
+        FROM "flexitanks" f
+        LEFT JOIN "companies" co ON co."id" = f."location_id"
+        WHERE f."status" = 'Available'
+        ORDER BY f."serial_number" ASC
+      `
+    );
+  }
+
+  const conditions = buildFlexitankConditions(query);
+  const where =
+    conditions.length > 0 ? Prisma.join(conditions, " AND ") : Prisma.sql`TRUE`;
+  const sortColumn = SORT_COLUMNS[query.sortBy];
+  const sortDirection = query.sortDir === "desc" ? Prisma.sql`DESC` : Prisma.sql`ASC`;
+
+  return prisma.$queryRaw<Record<string, unknown>[]>(
     Prisma.sql`
       SELECT
-        f."serial_number" AS "serialNumber",
         f."status",
-        f."size",
-        f."price",
-        co."display_name" AS "locationName",
+        f."serial_number" AS "serialNumber",
         po."po_number" AS "poNumber",
-        sh."booking",
-        f."created_at" AS "createdAt"
+        co."display_name" AS "locationName",
+        f."size",
+        f."price"
       FROM "flexitanks" f
       LEFT JOIN "companies" co ON co."id" = f."location_id"
       LEFT JOIN "purchase_orders" po ON po."id" = f."purchase_order_id"
       LEFT JOIN "shipments" sh ON sh."id" = f."shipment_id"
-      WHERE f."created_at" >= ${query.from}::date
-        AND f."created_at" < (${query.until}::date + interval '1 day')
-      ORDER BY f."created_at" DESC
+      WHERE ${where}
+      ORDER BY (f."status" = 'Available') DESC, ${sortColumn} ${sortDirection} NULLS LAST, f."created_at" DESC
     `
   );
 }

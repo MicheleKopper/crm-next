@@ -1,9 +1,8 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
-import { useState } from "react";
-
 import { cn } from "@/lib/utils";
+
+import { CopyButton } from "./copy-button";
 
 const EMPTY_LABEL = "Não informado";
 
@@ -20,16 +19,8 @@ export function DetailField({
   value: React.ReactNode;
   copyable?: boolean;
 }) {
-  const [copied, setCopied] = useState(false);
   const empty = isEmptyValue(value);
   const canCopy = copyable && !empty && typeof value === "string";
-
-  async function handleCopy() {
-    if (typeof value !== "string") return;
-    await navigator.clipboard.writeText(value);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  }
 
   return (
     <div className="group flex flex-wrap items-baseline gap-x-1.5 text-sm">
@@ -43,20 +34,7 @@ export function DetailField({
         {empty ? EMPTY_LABEL : value}
       </span>
 
-      {canCopy && (
-        <button
-          type="button"
-          onClick={handleCopy}
-          aria-label={`Copiar ${label}`}
-          title="Copiar"
-          className="text-navy-400 opacity-0 transition-opacity hover:text-navy-900 focus-visible:opacity-100 group-hover:opacity-100"
-        >
-          {copied ? <Check size={13} /> : <Copy size={13} />}
-        </button>
-      )}
-      {canCopy && copied && (
-        <span className="text-xs text-status-ativo">Copiado</span>
-      )}
+      {canCopy && <CopyButton value={value} label={label} />}
     </div>
   );
 }
