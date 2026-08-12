@@ -209,16 +209,18 @@ export function Sidebar({ user }: { user: SessionPayload }) {
           collapsed ? "px-2" : "px-3"
         )}
       >
-        <span
+        <Link
+          href="/dashboard"
           title="Dashboard"
           className={cn(
-            "flex cursor-not-allowed items-center gap-3 rounded-lg py-2.5 text-sm font-medium text-navy-100/40",
-            collapsed ? "justify-center px-0" : "px-3"
+            "flex items-center gap-3 rounded-lg py-2.5 text-sm font-medium text-navy-100 hover:bg-navy-800",
+            collapsed ? "justify-center px-0" : "px-3",
+            pathname.startsWith("/dashboard") && "bg-navy-800 font-semibold text-white"
           )}
         >
           <LayoutDashboard size={18} />
           {!collapsed && "Dashboard"}
-        </span>
+        </Link>
 
         {NAV_GROUPS.map((group) => {
           const isOpen = openGroup === group.key;

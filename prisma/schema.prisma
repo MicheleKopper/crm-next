@@ -55,8 +55,20 @@ model Company {
   shipmentsAsConsignee    Shipment[]       @relation("ShipmentConsignee")
   shipmentsAsShippingLine Shipment[]       @relation("ShipmentShippingLine")
   flexitankDepots         FlexitankDepot[]
+  quotes                  Quote[]
 
   @@map("companies")
+}
+
+/// Minimal quote record — only enough to power the dashboard's "Potencial" customer bucket.
+model Quote {
+  id         String   @id @default(uuid()) @db.Uuid
+  customerId String?  @map("customer_id") @db.Uuid
+  customer   Company? @relation(fields: [customerId], references: [id])
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("quotes")
 }
 
 model CustomerProfile {
@@ -207,6 +219,11 @@ model Shipment {
   mblNumber        String?   @map("mbl_number")
   hblNumber        String?   @map("hbl_number")
   status           String?
+  /// Declared container quantity for the shipment (independent of itemized `containers` rows)
+  quantity         Int?
+  /// One of: Flexitank - Full Service, Flexitank - Supply & Fit, Flexitank - Supply Only,
+  /// Isotank - Full Service, Isotank - Rental Only, General Cargo
+  shipmentType     String?   @map("shipment_type")
   createdAt        DateTime  @default(now()) @map("created_at")
   updatedAt        DateTime  @updatedAt @map("updated_at")
 

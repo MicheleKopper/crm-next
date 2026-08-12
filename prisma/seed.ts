@@ -214,6 +214,7 @@ async function main() {
   }
 
   await seedFlexitanks();
+  await seedDashboardData();
 
   console.log("Seed concluído.");
   console.log("Login admin: admin@crm.local / admin123");
@@ -387,6 +388,138 @@ async function seedFlexitanks() {
   }
 
   console.log("Flexitanks seed concluído.");
+}
+
+const SHIPMENT_TYPES = [
+  "Flexitank - Full Service",
+  "Flexitank - Supply & Fit",
+  "Flexitank - Supply Only",
+  "Isotank - Full Service",
+  "Isotank - Rental Only",
+  "General Cargo",
+];
+
+const PAST_STATUSES = ["Shipped", "Arrived", "Arrived", "Shipped", "Cancelled"];
+const CURRENT_STATUSES = ["Booked", "In Operation", "Pending", "Shipped", "Arrived"];
+const FUTURE_STATUSES = ["Booked", "Pending", "Waiting Departure"];
+
+function pick<T>(items: T[]): T {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+/** month offset relative to the current month (0 = this month, -1 = last month, 1 = next month) */
+function monthStart(offset: number) {
+  const date = new Date();
+  date.setDate(1);
+  date.setHours(0, 0, 0, 0);
+  date.setMonth(date.getMonth() + offset);
+  return date;
+}
+
+function randomDateInMonth(monthDate: Date) {
+  const day = 1 + Math.floor(Math.random() * 27);
+  return new Date(monthDate.getFullYear(), monthDate.getMonth(), day);
+}
+
+async function seedDashboardData() {
+  const existingQuote = await prisma.quote.findFirst();
+  if (existingQuote) return;
+
+  const customerCompanies = await prisma.$queryRaw<{ id: string }[]>`
+    SELECT id FROM companies WHERE company_type @> '["Customer"]'::jsonb
+  `;
+
+  const [shippingLine, shipper, consignee, product] = await Promise.all([
+    prisma.company.findFirst({ where: { taxId: "MAERSK-SHIPPING-LINE" } }),
+    prisma.company.findFirst({ where: { taxId: "SHIPPER-AGROFORTE" } }),
+    prisma.company.findFirst({ where: { taxId: "CONSIGNEE-STX" } }),
+    prisma.product.findFirst(),
+  ]);
+
+  // Demo companies to populate the "Leads / Potenciais / Novos" breakdown (companies created this month).
+  const leadCompany = await prisma.company.create({
+    data: {
+      displayName: "Nova Fronteira Log",
+      legalName: "Nova Fronteira Logística LTDA",
+      taxId: "DASH-LEAD-001",
+      foreignValue: false,
+      country: "BRAZIL",
+      companyType: ["Customer"],
+    },
+  });
+  const potentialCompany = await prisma.company.create({
+    data: {
+      displayName: "Rota Sul Comércio",
+      legalName: "Rota Sul Comércio Exterior LTDA",
+      taxId: "DASH-POTENTIAL-001",
+      foreignValue: false,
+      country: "BRAZIL",
+      companyType: ["Customer"],
+    },
+  });
+  const newCompany = await prisma.company.create({
+    data: {
+      displayName: "Prisma Exportadora",
+      legalName: "Prisma Exportadora LTDA",
+      taxId: "DASH-NEW-001",
+      foreignValue: false,
+      country: "BRAZIL",
+      companyType: ["Customer"],
+    },
+  });
+
+  await prisma.quote.create({ data: { customerId: potentialCompany.id } });
+
+  // Only the pre-existing customer pool feeds the random monthly generation — the 3 demo
+  // companies above are kept isolated so the Leads/Potenciais/Novos buckets stay deterministic.
+  const customerIds = customerCompanies.map((c) => c.id);
+
+  for (let offset = -12; offset <= 1; offset++) {
+    const monthDate = monthStart(offset);
+    const statusPool =
+      offset < 0 ? PAST_STATUSES : offset === 0 ? CURRENT_STATUSES : FUTURE_STATUSES;
+    const shipmentCount = 5 + Math.floor(Math.random() * 10);
+
+    for (let i = 0; i < shipmentCount; i++) {
+      const etd = randomDateInMonth(monthDate);
+      const status = pick(statusPool);
+      const atd = offset < 0 ? etd : offset === 0 && Math.random() > 0.5 ? etd : null;
+
+      await prisma.shipment.create({
+        data: {
+          booking: `DASH${offset}-${i}`,
+          customerId: pick(customerIds),
+          shipperId: shipper?.id,
+          consigneeId: consignee?.id,
+          shippingLineId: shippingLine?.id,
+          productId: product?.id,
+          etd,
+          atd,
+          status,
+          shipmentType: pick(SHIPMENT_TYPES),
+          quantity: 1 + Math.floor(Math.random() * 8),
+        },
+      });
+    }
+  }
+
+  // Guarantee the "Novo" bucket has at least one shipment this month.
+  await prisma.shipment.create({
+    data: {
+      booking: "DASH-NEWCO",
+      customerId: newCompany.id,
+      shipperId: shipper?.id,
+      consigneeId: consignee?.id,
+      shippingLineId: shippingLine?.id,
+      productId: product?.id,
+      etd: new Date(),
+      status: "Booked",
+      shipmentType: pick(SHIPMENT_TYPES),
+      quantity: 3,
+    },
+  });
+
+  console.log("Dashboard seed concluído.");
 }
 
 main()
