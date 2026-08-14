@@ -146,7 +146,6 @@ export default async function DashboardPage() {
         <ZoneLabel>Operacional</ZoneLabel>
         <div className="grid gap-6 sm:grid-cols-2">
           <div className="rounded-xl bg-white p-6 shadow-sm">
-            <p className="mb-3 text-sm font-bold text-navy-900">Status dos embarques</p>
             <StatusShipmentsPanel rows={statusShipments} />
           </div>
 
