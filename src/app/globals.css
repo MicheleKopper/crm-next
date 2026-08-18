@@ -19,6 +19,17 @@
   --status-incompleto: #b1b1b1;
   --status-warning: #d97706;
   --status-orange: #ea580c;
+
+  /* Escala única para séries de dados (gráficos, barras, donuts).
+     Ordem de uso: data-1 → data-5. Nunca usar verde/laranja/vermelho aqui. */
+  --data-1: #2f6fed; /* = status-lead — série principal (Bookings) */
+  --data-2: #17233d; /* = navy-900   — 2ª série (Containers)      */
+  --data-3: #7ea3ee; /*                3ª série (Clientes)        */
+  --data-4: #47597a; /* = navy-500   — 4ª série                   */
+  --data-5: #c7d6f7; /*                5ª série                   */
+
+  --data-track: #f1f4f9;
+  --data-zero: #ccd3e0;
 }
 
 @theme inline {
@@ -40,6 +51,14 @@
   --color-status-incompleto: var(--status-incompleto);
   --color-status-warning: var(--status-warning);
   --color-status-orange: var(--status-orange);
+
+  --color-data-1: var(--data-1);
+  --color-data-2: var(--data-2);
+  --color-data-3: var(--data-3);
+  --color-data-4: var(--data-4);
+  --color-data-5: var(--data-5);
+  --color-data-track: var(--data-track);
+  --color-data-zero: var(--data-zero);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);

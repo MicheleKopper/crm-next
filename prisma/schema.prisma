@@ -18,6 +18,7 @@ model User {
 
   ownedCompanies Company[] @relation("CompanyOwner")
   operatedLeads  Lead[]    @relation("LeadOperator")
+  dashboardLayout DashboardLayout?
 
   @@map("users")
 }
@@ -287,4 +288,17 @@ model FlexitankDepot {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("flexitank_depot")
+}
+
+/// Personalização do dashboard por usuário: ordem, tamanho e visibilidade de cada card.
+model DashboardLayout {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// DashboardLayoutItem[] — { id, order, size, visible }
+  layout    Json
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("dashboard_layouts")
 }

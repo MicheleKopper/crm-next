@@ -1,21 +1,8 @@
 "use client";
 
-import {
-  Anchor,
-  Calendar,
-  Circle,
-  Clock,
-  Info,
-  Settings,
-  Ship,
-  Truck,
-  XCircle,
-} from "lucide-react";
-import type { ComponentType } from "react";
-import { useState } from "react";
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { useMemo, useState } from "react";
 
-import { cn } from "@/lib/utils";
+import { DashboardCard, SegmentedControl } from "@/components/dashboard/dashboard-card";
 import type { StatusShipmentRow } from "@/server/modules/dashboard/dashboard.dto";
 
 type Period = "current" | "next";
@@ -25,82 +12,122 @@ type NumericKey =
   | "containersCurrentMonth"
   | "containersNextMonth";
 
-const STATUS_ICONS: Record<string, ComponentType<{ size?: number; className?: string }>> = {
-  Arrived: Ship,
-  Booked: Calendar,
-  "In Operation": Settings,
-  Pending: Clock,
-  Shipped: Truck,
-  Cancelled: XCircle,
-  "Waiting Departure": Anchor,
+const bookingsKeyFor = (p: Period): NumericKey =>
+  p === "current" ? "bookingsCurrentMonth" : "bookingsNextMonth";
+const containersKeyFor = (p: Period): NumericKey =>
+  p === "current" ? "containersCurrentMonth" : "containersNextMonth";
+
+const sumBy = (rows: StatusShipmentRow[], key: NumericKey) =>
+  rows.reduce((sum, row) => sum + row[key], 0);
+
+const RADIUS = 48;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+const GAP = 3;
+const STROKE = 15;
+const STROKE_HOVER = 19;
+const FALLBACK_COLOR = "#c7d0d9";
+
+type Arc = {
+  name: string;
+  count: number;
+  color: string;
+  pct: number;
+  dashArray: string;
+  dashOffset: number;
 };
 
-function bookingsKeyFor(period: Period): NumericKey {
-  return period === "current" ? "bookingsCurrentMonth" : "bookingsNextMonth";
+function buildArcs(rows: StatusShipmentRow[], dataKey: NumericKey, total: number): Arc[] {
+  let acc = 0;
+  return rows.map((row) => {
+    const count = row[dataKey];
+    const frac = total > 0 ? count / total : 0;
+    const length = Math.max(frac * CIRCUMFERENCE - GAP, 1);
+    const arc: Arc = {
+      name: row.status,
+      count,
+      color: row.colorCode || FALLBACK_COLOR,
+      pct: Math.round(frac * 100),
+      dashArray: `${length} ${CIRCUMFERENCE - length}`,
+      dashOffset: -acc * CIRCUMFERENCE,
+    };
+    acc += frac;
+    return arc;
+  });
 }
 
-function containersKeyFor(period: Period): NumericKey {
-  return period === "current" ? "containersCurrentMonth" : "containersNextMonth";
-}
-
-function sumBy(rows: StatusShipmentRow[], dataKey: NumericKey) {
-  return rows.reduce((sum, row) => sum + row[dataKey], 0);
-}
-
-function ToggleGroup<T extends string>({
-  options,
-  value,
-  onChange,
+function StatusDonutPanel({
+  rows,
+  dataKey,
+  total,
+  label,
 }: {
-  options: { value: T; label: string }[];
-  value: T;
-  onChange: (value: T) => void;
+  rows: StatusShipmentRow[];
+  dataKey: NumericKey;
+  total: number;
+  label: string;
 }) {
-  return (
-    <div className="inline-flex rounded-full bg-navy-50 p-1">
-      {options.map((option) => (
-        <button
-          key={option.value}
-          type="button"
-          onClick={() => onChange(option.value)}
-          className={cn(
-            "rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
-            value === option.value
-              ? "bg-white text-navy-900 shadow-sm"
-              : "text-navy-500 hover:text-navy-900"
-          )}
-        >
-          {option.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function RingTooltip({
-  active,
-  payload,
-  bookingsByStatus,
-  containersByStatus,
-}: {
-  active?: boolean;
-  payload?: { payload: StatusShipmentRow }[];
-  bookingsByStatus: Map<string, number>;
-  containersByStatus: Map<string, number>;
-}) {
-  if (!active || !payload || payload.length === 0) return null;
-  const status = payload[0].payload.status;
+  const arcs = useMemo(() => buildArcs(rows, dataKey, total), [rows, dataKey, total]);
+  const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <div className="rounded-lg border border-navy-100 bg-white px-3 py-2 text-xs shadow-lg">
-      <p className="font-semibold text-navy-900">{status}</p>
-      <hr className="my-1.5 border-navy-100" />
-      <p className="text-navy-500">
-        Bookings: <span className="font-semibold text-navy-900">{bookingsByStatus.get(status) ?? 0}</span>
-      </p>
-      <p className="text-navy-500">
-        Containers: <span className="font-semibold text-navy-900">{containersByStatus.get(status) ?? 0}</span>
-      </p>
+    <div className="flex items-center gap-7 p-6">
+      <div className="relative h-[148px] w-[148px] shrink-0">
+        {arcs.length === 0 ? (
+          <div className="flex h-full items-center justify-center rounded-full bg-navy-100/60 text-xs text-navy-500">
+            Sem dados
+          </div>
+        ) : (
+          <svg viewBox="0 0 120 120" className="h-[148px] w-[148px] -rotate-90">
+            <circle cx={60} cy={60} r={RADIUS} fill="none" stroke="#eef1f4" strokeWidth={STROKE} />
+            {arcs.map((arc, index) => (
+              <circle
+                key={arc.name}
+                cx={60}
+                cy={60}
+                r={RADIUS}
+                fill="none"
+                stroke={arc.color}
+                strokeWidth={hovered === index ? STROKE_HOVER : STROKE}
+                strokeDasharray={arc.dashArray}
+                strokeDashoffset={arc.dashOffset}
+                opacity={hovered === null || hovered === index ? 1 : 0.28}
+                className="transition-[opacity,stroke-width] duration-200"
+              />
+            ))}
+          </svg>
+        )}
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-0.5">
+          <span className="text-[30px] font-bold leading-none tracking-[-0.02em] text-navy-900">
+            {total}
+          </span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.11em] text-navy-500/70">
+            {label}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        {arcs.map((arc, index) => (
+          <div
+            key={arc.name}
+            onMouseEnter={() => setHovered(index)}
+            onMouseLeave={() => setHovered(null)}
+            className="-mx-2 grid grid-cols-[1fr_auto_auto] items-center gap-x-3 rounded-[7px] px-2 py-[7px] transition-colors hover:bg-[#f6f8fa]"
+          >
+            <div className="flex min-w-0 items-center gap-[9px]">
+              <span
+                className="h-[9px] w-[9px] shrink-0 rounded-full"
+                style={{ background: arc.color }}
+              />
+              <span className="truncate text-[13.5px] text-navy-700">{arc.name}</span>
+            </div>
+            <span className="text-[12.5px] tabular-nums text-navy-500">{arc.count}</span>
+            <span className="min-w-[38px] text-right text-[13.5px] font-semibold tabular-nums text-navy-900">
+              {arc.pct}%
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -110,181 +137,44 @@ export function StatusShipmentsPanel({ rows }: { rows: StatusShipmentRow[] }) {
   const bookingsKey = bookingsKeyFor(period);
   const containersKey = containersKeyFor(period);
 
-  const bookingsSegments = rows
-    .filter((row) => row[bookingsKey] > 0)
-    .sort((a, b) => b[bookingsKey] - a[bookingsKey]);
-  const containersSegments = rows
-    .filter((row) => row[containersKey] > 0)
-    .sort((a, b) => b[containersKey] - a[containersKey]);
-
   const bookingsTotal = sumBy(rows, bookingsKey);
   const containersTotal = sumBy(rows, containersKey);
 
-  const bookingsByStatus = new Map(rows.map((row) => [row.status, row[bookingsKey]]));
-  const containersByStatus = new Map(rows.map((row) => [row.status, row[containersKey]]));
-
-  const allStatuses = rows
-    .filter((row) => row[bookingsKey] > 0 || row[containersKey] > 0)
-    .sort((a, b) => b[bookingsKey] + b[containersKey] - (a[bookingsKey] + a[containersKey]));
+  const bookingRows = rows
+    .filter((row) => row[bookingsKey] > 0)
+    .sort((a, b) => b[bookingsKey] - a[bookingsKey]);
+  const containerRows = rows
+    .filter((row) => row[containersKey] > 0)
+    .sort((a, b) => b[containersKey] - a[containersKey]);
 
   return (
-    <div>
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-status-lead/10 text-status-lead">
-            <Ship size={20} />
-          </span>
-          <div>
-            <p className="text-base font-bold text-navy-900">Status dos embarques</p>
-            <p className="text-sm text-navy-500">Bookings e containers por status</p>
-          </div>
+    <DashboardCard
+      title="Status dos embarques"
+      subtitle="Bookings e containers por status"
+      actions={
+        <SegmentedControl
+          value={period}
+          onChange={setPeriod}
+          options={[
+            { value: "current", label: "Mês atual" },
+            { value: "next", label: "Próx. mês" },
+          ]}
+        />
+      }
+    >
+      <div className="grid sm:grid-cols-2">
+        <div className="sm:border-r sm:border-navy-100">
+          <StatusDonutPanel rows={bookingRows} dataKey={bookingsKey} total={bookingsTotal} label="Bookings" />
         </div>
-
-        <div className="flex items-center gap-2">
-          <ToggleGroup
-            value={period}
-            onChange={setPeriod}
-            options={[
-              { value: "current", label: "Mês atual" },
-              { value: "next", label: "Próx. mês" },
-            ]}
+        <div className="border-t border-navy-100 sm:border-t-0">
+          <StatusDonutPanel
+            rows={containerRows}
+            dataKey={containersKey}
+            total={containersTotal}
+            label="Containers"
           />
-          <span
-            title="Comparação de bookings e containers por status e período."
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-navy-300 hover:text-navy-500"
-          >
-            <Info size={16} />
-          </span>
         </div>
       </div>
-
-      <div className="mt-6 grid grid-cols-2 gap-4 border-t border-navy-100 pt-6">
-        <div className="text-center">
-          <p className="mb-2 text-xs font-semibold text-navy-500">Bookings</p>
-          <div className="relative mx-auto h-36 w-36">
-            {bookingsSegments.length === 0 ? (
-              <div className="flex h-full items-center justify-center rounded-full bg-navy-50 text-xs text-navy-400">
-                Sem dados
-              </div>
-            ) : (
-              <>
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={bookingsSegments}
-                      dataKey={bookingsKey}
-                      nameKey="status"
-                      innerRadius="60%"
-                      outerRadius="100%"
-                      paddingAngle={bookingsSegments.length > 1 ? 2 : 0}
-                      cornerRadius={3}
-                      stroke="none"
-                      isAnimationActive={false}
-                    >
-                      {bookingsSegments.map((row) => (
-                        <Cell key={row.status} fill={row.colorCode} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      content={
-                        <RingTooltip
-                          bookingsByStatus={bookingsByStatus}
-                          containersByStatus={containersByStatus}
-                        />
-                      }
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-xl font-bold text-navy-900">{bookingsTotal}</span>
-                  <span className="text-[10px] text-navy-400">total</span>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        <div className="text-center">
-          <p className="mb-2 text-xs font-semibold text-navy-500">Containers</p>
-          <div className="relative mx-auto h-36 w-36">
-            {containersSegments.length === 0 ? (
-              <div className="flex h-full items-center justify-center rounded-full bg-navy-50 text-xs text-navy-400">
-                Sem dados
-              </div>
-            ) : (
-              <>
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={containersSegments}
-                      dataKey={containersKey}
-                      nameKey="status"
-                      innerRadius="60%"
-                      outerRadius="100%"
-                      paddingAngle={containersSegments.length > 1 ? 2 : 0}
-                      cornerRadius={3}
-                      stroke="none"
-                      isAnimationActive={false}
-                    >
-                      {containersSegments.map((row) => (
-                        <Cell key={row.status} fill={row.colorCode} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      content={
-                        <RingTooltip
-                          bookingsByStatus={bookingsByStatus}
-                          containersByStatus={containersByStatus}
-                        />
-                      }
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-xl font-bold text-navy-900">{containersTotal}</span>
-                  <span className="text-[10px] text-navy-400">total</span>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-6 space-y-2 border-t border-navy-100 pt-5">
-        <div className="grid grid-cols-[1fr_64px_72px] gap-2 text-[10px] font-semibold uppercase tracking-wide text-navy-400">
-          <span>Status</span>
-          <span className="text-right">Bookings</span>
-          <span className="text-right">Containers</span>
-        </div>
-        {allStatuses.length === 0 ? (
-          <p className="text-sm text-navy-400">Nenhum dado para esta seleção.</p>
-        ) : (
-          allStatuses.map((row) => {
-            const Icon = STATUS_ICONS[row.status] ?? Circle;
-            return (
-              <div
-                key={row.status}
-                className="grid grid-cols-[1fr_64px_72px] items-center gap-2 text-sm"
-              >
-                <span className="flex min-w-0 items-center gap-2 text-navy-700">
-                  <span
-                    className="h-2 w-2 shrink-0 rounded-full"
-                    style={{ backgroundColor: row.colorCode }}
-                  />
-                  <Icon size={14} className="shrink-0 text-navy-400" />
-                  <span className="truncate">{row.status}</span>
-                </span>
-                <span className="text-right font-semibold text-navy-900">
-                  {row[bookingsKey]}
-                </span>
-                <span className="text-right font-semibold text-navy-900">
-                  {row[containersKey]}
-                </span>
-              </div>
-            );
-          })
-        )}
-      </div>
-    </div>
+    </DashboardCard>
   );
 }
