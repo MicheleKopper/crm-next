@@ -19,7 +19,7 @@ export function CopyButton({ value, label }: { value: string; label: string }) {
         onClick={handleCopy}
         aria-label={`Copiar ${label}`}
         title="Copiar"
-        className="shrink-0 text-navy-400 opacity-0 transition-opacity hover:text-navy-900 focus-visible:opacity-100 group-hover:opacity-100"
+        className="shrink-0 text-navy-400 opacity-0 transition-opacity hover:text-navy-900 focus-visible:opacity-100 group-hover:opacity-100 dark:hover:text-navy-100"
       >
         {copied ? <Check size={13} /> : <Copy size={13} />}
       </button>

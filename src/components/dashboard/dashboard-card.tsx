@@ -29,15 +29,19 @@ export function DashboardCard({
   return (
     <section
       className={cn(
-        "flex h-full flex-col overflow-hidden rounded-2xl border border-navy-100 bg-white",
+        "flex h-full flex-col overflow-hidden rounded-2xl border border-navy-100 bg-white dark:border-navy-700 dark:bg-navy-900",
         "shadow-[0_1px_2px_rgba(16,26,48,0.05),0_8px_24px_-18px_rgba(16,26,48,0.25)]",
         className
       )}
     >
-      <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-navy-100 px-5 py-4">
+      <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-navy-100 px-5 py-4 dark:border-navy-700">
         <div className="min-w-0">
-          <h3 className="text-[15px] font-semibold tracking-tight text-navy-900">{title}</h3>
-          {subtitle ? <p className="text-[12.5px] text-navy-500">{subtitle}</p> : null}
+          <h3 className="text-[15px] font-semibold tracking-tight text-navy-900 dark:text-navy-100">
+            {title}
+          </h3>
+          {subtitle ? (
+            <p className="text-[12.5px] text-navy-500 dark:text-navy-100/70">{subtitle}</p>
+          ) : null}
         </div>
         {actions ? <div className="flex items-center gap-2.5">{actions}</div> : null}
       </header>
@@ -45,7 +49,7 @@ export function DashboardCard({
       <div className="flex-1">{children}</div>
 
       {footer ? (
-        <footer className="flex shrink-0 flex-wrap items-center gap-2 border-t border-navy-100 bg-navy-100/20 px-5 py-3 text-xs text-navy-500">
+        <footer className="flex shrink-0 flex-wrap items-center gap-2 border-t border-navy-100 bg-navy-100/20 px-5 py-3 text-xs text-navy-500 dark:border-navy-700 dark:bg-navy-800/40 dark:text-navy-100/70">
           {footer}
         </footer>
       ) : null}
@@ -56,7 +60,7 @@ export function DashboardCard({
 /** Rótulo de seção dentro do card. */
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-navy-500/70">
+    <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-navy-500/70 dark:text-navy-100/50">
       {children}
     </p>
   );
@@ -96,7 +100,7 @@ export function MetricValue({
       className={cn(
         "font-bold leading-none",
         size === "hero" ? "text-[30px] tracking-[-0.035em]" : "text-[20px] tracking-[-0.03em]",
-        value === 0 ? "text-data-zero" : "text-navy-900",
+        value === 0 ? "text-data-zero" : "text-navy-900 dark:text-navy-100",
         className
       )}
     >
@@ -116,7 +120,7 @@ export function SegmentedControl<T extends string | boolean>({
   onChange: (value: T) => void;
 }) {
   return (
-    <div className="inline-flex gap-0.5 rounded-lg bg-navy-100/60 p-[3px]">
+    <div className="inline-flex gap-0.5 rounded-lg bg-navy-100/60 p-[3px] dark:bg-navy-800/60">
       {options.map((option) => (
         <button
           key={String(option.value)}
@@ -125,8 +129,8 @@ export function SegmentedControl<T extends string | boolean>({
           className={cn(
             "rounded-md px-3 py-1.5 text-xs font-semibold transition-colors",
             value === option.value
-              ? "bg-white text-navy-900 shadow-sm"
-              : "text-navy-500 hover:text-navy-900"
+              ? "bg-white text-navy-900 shadow-sm dark:bg-navy-700 dark:text-navy-100"
+              : "text-navy-500 hover:text-navy-900 dark:text-navy-100/60 dark:hover:text-navy-100"
           )}
         >
           {option.label}
@@ -150,7 +154,7 @@ export function ProportionBar({
 }) {
   return (
     <span
-      className="block overflow-hidden rounded-full bg-data-track"
+      className="block overflow-hidden rounded-full bg-data-track dark:bg-navy-800/60"
       style={{ height }}
     >
       <span

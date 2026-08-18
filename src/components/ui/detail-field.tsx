@@ -24,11 +24,11 @@ export function DetailField({
 
   return (
     <div className="group flex flex-wrap items-baseline gap-x-1.5 text-sm">
-      <span className="text-navy-500">{label}:</span>
+      <span className="text-navy-500 dark:text-navy-100/70">{label}:</span>
       <span
         className={cn(
           "font-medium",
-          empty ? "italic text-navy-400" : "text-navy-900"
+          empty ? "italic text-navy-400" : "text-navy-900 dark:text-navy-100"
         )}
       >
         {empty ? EMPTY_LABEL : value}
@@ -49,12 +49,12 @@ export function DetailTextBlock({
   const empty = isEmptyValue(value);
 
   return (
-    <div className="rounded-lg border border-navy-100 bg-navy-100/20 px-3 py-2.5">
-      <p className="text-xs font-medium text-navy-500">{label}</p>
+    <div className="rounded-lg border border-navy-100 bg-navy-100/20 px-3 py-2.5 dark:border-navy-700 dark:bg-navy-800/40">
+      <p className="text-xs font-medium text-navy-500 dark:text-navy-100/70">{label}</p>
       <p
         className={cn(
           "mt-0.5 whitespace-pre-wrap text-sm",
-          empty ? "italic text-navy-400" : "text-navy-900"
+          empty ? "italic text-navy-400" : "text-navy-900 dark:text-navy-100"
         )}
       >
         {empty ? EMPTY_LABEL : value}

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { DashboardCard, SegmentedControl } from "@/components/dashboard/dashboard-card";
+import { useTheme } from "@/components/theme/theme-provider";
 import type { StatusShipmentRow } from "@/server/modules/dashboard/dashboard.dto";
 
 type Period = "current" | "next";
@@ -68,17 +69,19 @@ function StatusDonutPanel({
 }) {
   const arcs = useMemo(() => buildArcs(rows, dataKey, total), [rows, dataKey, total]);
   const [hovered, setHovered] = useState<number | null>(null);
+  const { theme } = useTheme();
+  const trackColor = theme === "dark" ? "#28324a" : "#eef1f4";
 
   return (
     <div className="flex items-center gap-7 p-6">
       <div className="relative h-[148px] w-[148px] shrink-0">
         {arcs.length === 0 ? (
-          <div className="flex h-full items-center justify-center rounded-full bg-navy-100/60 text-xs text-navy-500">
+          <div className="flex h-full items-center justify-center rounded-full bg-navy-100/60 text-xs text-navy-500 dark:bg-navy-800/60 dark:text-navy-100/70">
             Sem dados
           </div>
         ) : (
           <svg viewBox="0 0 120 120" className="h-[148px] w-[148px] -rotate-90">
-            <circle cx={60} cy={60} r={RADIUS} fill="none" stroke="#eef1f4" strokeWidth={STROKE} />
+            <circle cx={60} cy={60} r={RADIUS} fill="none" stroke={trackColor} strokeWidth={STROKE} />
             {arcs.map((arc, index) => (
               <circle
                 key={arc.name}
@@ -97,10 +100,10 @@ function StatusDonutPanel({
           </svg>
         )}
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-0.5">
-          <span className="text-[30px] font-bold leading-none tracking-[-0.02em] text-navy-900">
+          <span className="text-[30px] font-bold leading-none tracking-[-0.02em] text-navy-900 dark:text-navy-100">
             {total}
           </span>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.11em] text-navy-500/70">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.11em] text-navy-500/70 dark:text-navy-100/50">
             {label}
           </span>
         </div>
@@ -112,17 +115,17 @@ function StatusDonutPanel({
             key={arc.name}
             onMouseEnter={() => setHovered(index)}
             onMouseLeave={() => setHovered(null)}
-            className="-mx-2 grid grid-cols-[1fr_auto_auto] items-center gap-x-3 rounded-[7px] px-2 py-[7px] transition-colors hover:bg-[#f6f8fa]"
+            className="-mx-2 grid grid-cols-[1fr_auto_auto] items-center gap-x-3 rounded-[7px] px-2 py-[7px] transition-colors hover:bg-[#f6f8fa] dark:hover:bg-navy-800/60"
           >
             <div className="flex min-w-0 items-center gap-[9px]">
               <span
                 className="h-[9px] w-[9px] shrink-0 rounded-full"
                 style={{ background: arc.color }}
               />
-              <span className="truncate text-[13.5px] text-navy-700">{arc.name}</span>
+              <span className="truncate text-[13.5px] text-navy-700 dark:text-navy-100">{arc.name}</span>
             </div>
-            <span className="text-[12.5px] tabular-nums text-navy-500">{arc.count}</span>
-            <span className="min-w-[38px] text-right text-[13.5px] font-semibold tabular-nums text-navy-900">
+            <span className="text-[12.5px] tabular-nums text-navy-500 dark:text-navy-100/70">{arc.count}</span>
+            <span className="min-w-[38px] text-right text-[13.5px] font-semibold tabular-nums text-navy-900 dark:text-navy-100">
               {arc.pct}%
             </span>
           </div>
@@ -163,10 +166,10 @@ export function StatusShipmentsPanel({ rows }: { rows: StatusShipmentRow[] }) {
       }
     >
       <div className="grid sm:grid-cols-2">
-        <div className="sm:border-r sm:border-navy-100">
+        <div className="sm:border-r sm:border-navy-100 dark:sm:border-navy-700">
           <StatusDonutPanel rows={bookingRows} dataKey={bookingsKey} total={bookingsTotal} label="Bookings" />
         </div>
-        <div className="border-t border-navy-100 sm:border-t-0">
+        <div className="border-t border-navy-100 sm:border-t-0 dark:border-navy-700">
           <StatusDonutPanel
             rows={containerRows}
             dataKey={containersKey}

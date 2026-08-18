@@ -26,11 +26,11 @@ function SizeTile({
     <div
       className={cn(
         "flex flex-col gap-2.5 rounded-xl border p-3.5",
-        out ? "border-status-perdido/25 bg-status-perdido/[0.03]" : "border-navy-100"
+        out ? "border-status-perdido/25 bg-status-perdido/[0.03]" : "border-navy-100 dark:border-navy-700"
       )}
     >
       <div className="flex items-center justify-between">
-        <span className="text-xs font-bold text-navy-900">{size}</span>
+        <span className="text-xs font-bold text-navy-900 dark:text-navy-100">{size}</span>
         {out ? (
           <span className="text-[10.5px] font-semibold text-status-perdido">sem estoque</span>
         ) : (
@@ -42,18 +42,18 @@ function SizeTile({
         <span
           className={cn(
             "text-[28px] font-bold leading-none tracking-[-0.035em]",
-            out ? "text-status-perdido/35" : "text-navy-900"
+            out ? "text-status-perdido/35" : "text-navy-900 dark:text-navy-100"
           )}
         >
           {available}
         </span>
-        <span className="text-[11.5px] text-navy-500">disponível</span>
+        <span className="text-[11.5px] text-navy-500 dark:text-navy-100/70">disponível</span>
       </div>
 
       <div
         className={cn(
-          "flex items-center gap-1.5 border-t pt-2.5 text-[11.5px] text-navy-500",
-          out ? "border-status-perdido/15" : "border-navy-100/70"
+          "flex items-center gap-1.5 border-t pt-2.5 text-[11.5px] text-navy-500 dark:text-navy-100/70",
+          out ? "border-status-perdido/15" : "border-navy-100/70 dark:border-navy-700/70"
         )}
       >
         {expected > 0 ? (
@@ -64,7 +64,7 @@ function SizeTile({
             esperados
           </>
         ) : (
-          <span className="text-navy-500/70">Nada previsto</span>
+          <span className="text-navy-500/70 dark:text-navy-100/40">Nada previsto</span>
         )}
       </div>
     </div>
@@ -95,7 +95,7 @@ export function FlexitankAvailabilityGrid({ sizes, available, expected }: Props)
       }
     >
       {visible.length === 0 ? (
-        <p className="p-5 text-sm text-navy-500">
+        <p className="p-5 text-sm text-navy-500 dark:text-navy-100/70">
           Nenhum flexitank disponível ou esperado.
         </p>
       ) : (

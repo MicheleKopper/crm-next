@@ -60,7 +60,7 @@ export function SearchBar({
       className={cn(
         "flex h-9 items-center overflow-hidden rounded-lg border transition-all duration-300 ease-in-out",
         expanded
-          ? "w-64 border-navy-100 bg-white"
+          ? "w-64 border-navy-100 bg-white dark:border-navy-700 dark:bg-navy-900"
           : "w-9 border-transparent bg-transparent"
       )}
     >
@@ -69,7 +69,7 @@ export function SearchBar({
         onClick={handleExpand}
         aria-label={ariaLabel}
         title="Buscar"
-        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-navy-500 hover:bg-navy-100 hover:text-navy-900"
+        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-navy-500 hover:bg-navy-100 hover:text-navy-900 dark:text-navy-100/70 dark:hover:bg-navy-800 dark:hover:text-navy-100"
       >
         <Search size={16} />
       </button>
@@ -82,7 +82,7 @@ export function SearchBar({
         placeholder={placeholder}
         aria-label={placeholder}
         tabIndex={expanded ? 0 : -1}
-        className="w-full min-w-0 bg-transparent pr-3 text-sm text-navy-900 outline-none placeholder:text-navy-500/60"
+        className="w-full min-w-0 bg-transparent pr-3 text-sm text-navy-900 outline-none placeholder:text-navy-500/60 dark:text-navy-100 dark:placeholder:text-navy-100/40"
       />
     </div>
   );

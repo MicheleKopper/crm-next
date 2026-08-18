@@ -178,7 +178,7 @@ export function Sidebar({ user }: { user: SessionPayload }) {
         type="button"
         onClick={toggleCollapsed}
         title={collapsed ? "Expandir menu" : "Recolher menu"}
-        className="absolute -right-3 top-6 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-navy-100 bg-white text-navy-700 shadow-md hover:bg-navy-100"
+        className="absolute -right-3 top-6 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-navy-100 bg-white text-navy-700 shadow-md hover:bg-navy-100 dark:border-navy-700 dark:bg-navy-800 dark:text-navy-100 dark:hover:bg-navy-700"
       >
         {collapsed ? <PanelLeftOpen size={14} /> : <PanelLeftClose size={14} />}
       </button>

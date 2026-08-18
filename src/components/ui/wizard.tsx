@@ -12,7 +12,7 @@ export function Stepper({
   current: number;
 }) {
   return (
-    <div className="border-b border-navy-100 bg-navy-100/20 px-6 py-4">
+    <div className="border-b border-navy-100 bg-navy-100/20 px-6 py-4 dark:border-navy-700 dark:bg-navy-800/40">
       <ol className="flex items-center">
         {steps.map((label, index) => {
           const isDone = index < current;
@@ -31,7 +31,9 @@ export function Stepper({
                     "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors",
                     (isDone || isActive) && "bg-navy-900 text-white",
                     isActive && "ring-4 ring-navy-900/15",
-                    !isDone && !isActive && "border border-navy-200 bg-white text-navy-400"
+                    !isDone &&
+                      !isActive &&
+                      "border border-navy-200 bg-white text-navy-400 dark:bg-navy-900 dark:border-navy-700"
                   )}
                 >
                   {isDone ? <Check size={14} /> : index + 1}
@@ -39,7 +41,7 @@ export function Stepper({
                 <span
                   className={cn(
                     "whitespace-nowrap text-xs font-medium",
-                    isActive ? "text-navy-900" : "text-navy-400"
+                    isActive ? "text-navy-900 dark:text-navy-100" : "text-navy-400"
                   )}
                 >
                   {label}
@@ -72,8 +74,8 @@ export function WizardSection({
 }) {
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 text-sm font-semibold text-navy-900">
-        <Icon size={15} className="text-navy-500" />
+      <div className="flex items-center gap-2 text-sm font-semibold text-navy-900 dark:text-navy-100">
+        <Icon size={15} className="text-navy-500 dark:text-navy-100/70" />
         {title}
       </div>
       {children}

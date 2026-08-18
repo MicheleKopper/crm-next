@@ -173,8 +173,10 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
       <div className="space-y-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-navy-900">Dashboard</h1>
-            <p className="text-sm text-navy-500">
+            <h1 className="text-2xl font-bold tracking-tight text-navy-900 dark:text-navy-100">
+              Dashboard
+            </h1>
+            <p className="text-sm text-navy-500 dark:text-navy-100/70">
               <Link href="/dashboard" className="hover:underline">
                 Home
               </Link>

@@ -1,12 +1,44 @@
 "use client";
 
-import { ChevronsUpDown, LogOut, User } from "lucide-react";
+import { ChevronsUpDown, LogOut, Moon, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
+import { useTheme } from "@/components/theme/theme-provider";
 import { cn } from "@/lib/utils";
 import type { SessionPayload } from "@/server/auth/session";
+
+function DarkModeMenuItem() {
+  const { theme, toggleTheme } = useTheme();
+  const enabled = theme === "dark";
+
+  return (
+    <button
+      type="button"
+      role="menuitemcheckbox"
+      aria-checked={enabled}
+      onClick={toggleTheme}
+      className="flex w-full items-center gap-2.5 border-t border-navy-700 px-3 py-2.5 text-sm font-medium text-navy-100 hover:bg-navy-700 hover:text-white"
+    >
+      <Moon size={16} />
+      <span className="flex-1 text-left">Dark Mode</span>
+      <span
+        className={cn(
+          "relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors",
+          enabled ? "bg-status-lead" : "bg-navy-500/50"
+        )}
+      >
+        <span
+          className={cn(
+            "inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform",
+            enabled ? "translate-x-4" : "translate-x-0.5"
+          )}
+        />
+      </span>
+    </button>
+  );
+}
 
 export function UserMenu({
   user,
@@ -74,6 +106,7 @@ export function UserMenu({
             <User size={16} />
             Meu Perfil
           </button>
+          <DarkModeMenuItem />
           <button
             type="button"
             onClick={handleLogout}
@@ -104,6 +137,7 @@ export function UserMenu({
             <User size={16} />
             Meu Perfil
           </button>
+          <DarkModeMenuItem />
           <button
             type="button"
             onClick={handleLogout}

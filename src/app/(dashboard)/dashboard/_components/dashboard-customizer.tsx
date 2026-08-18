@@ -281,7 +281,7 @@ export function DashboardWidgetGrid({ widgets }: { widgets: DashboardWidget[] })
     <div className="space-y-4">
       {editing && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-status-lead/50 bg-status-lead/5 px-4 py-3">
-          <p className="text-sm font-semibold text-navy-900">
+          <p className="text-sm font-semibold text-navy-900 dark:text-navy-100">
             Modo personalização ativo — arraste, redimensione ou oculte os cards.
           </p>
           <div className="flex items-center gap-2">

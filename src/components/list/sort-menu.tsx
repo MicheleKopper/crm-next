@@ -63,13 +63,16 @@ export function SortMenu({
         onClick={() => setOpen((value) => !value)}
         aria-label={ariaLabel}
         title="Ordenar"
-        className={cn("h-9 w-9 p-0", isActive && "border-navy-900 text-navy-900")}
+        className={cn(
+          "h-9 w-9 p-0",
+          isActive && "border-navy-900 text-navy-900 dark:border-navy-100 dark:text-navy-100"
+        )}
       >
         <ArrowUpDown size={16} />
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-[calc(100%+0.5rem)] z-20 w-52 overflow-hidden rounded-lg border border-navy-100 bg-white py-1 shadow-lg">
+        <div className="absolute right-0 top-[calc(100%+0.5rem)] z-20 w-52 overflow-hidden rounded-lg border border-navy-100 bg-white py-1 shadow-lg dark:border-navy-700 dark:bg-navy-900">
           <p className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-navy-400">
             Ordenar por
           </p>
@@ -81,8 +84,8 @@ export function SortMenu({
                 type="button"
                 onClick={() => applySort(option.value)}
                 className={cn(
-                  "flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-navy-50",
-                  active ? "font-semibold text-navy-900" : "text-navy-700"
+                  "flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-navy-50 dark:hover:bg-navy-800",
+                  active ? "font-semibold text-navy-900 dark:text-navy-100" : "text-navy-700 dark:text-navy-100/70"
                 )}
               >
                 {option.label}

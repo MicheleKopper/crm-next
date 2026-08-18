@@ -37,17 +37,17 @@ export function Modal({
         aria-modal="true"
         aria-label={title}
         className={cn(
-          "w-full max-w-lg rounded-xl bg-white p-6 shadow-xl",
+          "w-full max-w-lg rounded-xl bg-white p-6 shadow-xl dark:bg-navy-900",
           className
         )}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-navy-900">{title}</h2>
+          <h2 className="text-lg font-bold text-navy-900 dark:text-navy-100">{title}</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="rounded-full p-1 text-navy-500 hover:bg-navy-100"
+            className="rounded-full p-1 text-navy-500 hover:bg-navy-100 dark:text-navy-100/70 dark:hover:bg-navy-800"
           >
             <X size={18} />
           </button>

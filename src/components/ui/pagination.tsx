@@ -37,7 +37,7 @@ export function Pagination({
         onChange={(event) =>
           updateParams({ limit: event.target.value, offset: "0" })
         }
-        className="rounded-lg border border-navy-100 bg-white px-2 py-1.5 text-sm text-navy-900"
+        className="rounded-lg border border-navy-100 bg-white px-2 py-1.5 text-sm text-navy-900 dark:border-navy-700 dark:bg-navy-900 dark:text-navy-100"
       >
         {[10, 20, 50, 100].map((option) => (
           <option key={option} value={option}>
@@ -50,7 +50,7 @@ export function Pagination({
         type="button"
         disabled={!hasPrevious}
         onClick={() => updateParams({ offset: String(Math.max(0, offset - limit)) })}
-        className="rounded-lg border border-navy-100 p-2 text-navy-700 disabled:cursor-not-allowed disabled:opacity-40"
+        className="rounded-lg border border-navy-100 p-2 text-navy-700 disabled:cursor-not-allowed disabled:opacity-40 dark:border-navy-700 dark:text-navy-100"
         aria-label="Página anterior"
       >
         <ChevronLeft size={16} />
@@ -60,13 +60,13 @@ export function Pagination({
         type="button"
         disabled={!hasNext}
         onClick={() => updateParams({ offset: String(offset + limit) })}
-        className="rounded-lg border border-navy-100 p-2 text-navy-700 disabled:cursor-not-allowed disabled:opacity-40"
+        className="rounded-lg border border-navy-100 p-2 text-navy-700 disabled:cursor-not-allowed disabled:opacity-40 dark:border-navy-700 dark:text-navy-100"
         aria-label="Próxima página"
       >
         <ChevronRight size={16} />
       </button>
 
-      <span className="text-sm text-navy-500">
+      <span className="text-sm text-navy-500 dark:text-navy-100/70">
         {(offset + currentCount).toLocaleString("pt-BR")} de{" "}
         {totalCount.toLocaleString("pt-BR")}
       </span>

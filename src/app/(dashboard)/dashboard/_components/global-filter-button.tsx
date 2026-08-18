@@ -159,14 +159,14 @@ function FilterPanel({
   }
 
   return (
-    <div className="absolute right-0 top-[calc(100%+8px)] z-40 w-[min(92vw,600px)] rounded-xl border border-navy-100 bg-white p-4 shadow-xl">
+    <div className="absolute right-0 top-[calc(100%+8px)] z-40 w-[min(92vw,600px)] rounded-xl border border-navy-100 bg-white p-4 shadow-xl dark:border-navy-700 dark:bg-navy-900">
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-sm font-semibold text-navy-900">Filtro inteligente</p>
+        <p className="text-sm font-semibold text-navy-900 dark:text-navy-100">Filtro inteligente</p>
         {conditions.length > 0 && (
           <button
             type="button"
             onClick={clearAll}
-            className="text-xs font-semibold text-navy-500 hover:text-navy-900"
+            className="text-xs font-semibold text-navy-500 hover:text-navy-900 dark:text-navy-100/70 dark:hover:text-navy-100"
           >
             Limpar filtros
           </button>
@@ -174,7 +174,7 @@ function FilterPanel({
       </div>
 
       {conditions.length === 0 ? (
-        <p className="rounded-lg bg-navy-100/40 px-3 py-3 text-[13px] text-navy-500">
+        <p className="rounded-lg bg-navy-100/40 px-3 py-3 text-[13px] text-navy-500 dark:bg-navy-800/40 dark:text-navy-100/70">
           Nenhuma condição adicionada.
         </p>
       ) : (
@@ -186,7 +186,7 @@ function FilterPanel({
 
             return (
               <div key={condition.id} className="flex items-start gap-2">
-                <div className="w-14 pt-2.5 text-right text-xs font-semibold uppercase tracking-wide text-navy-500/70">
+                <div className="w-14 pt-2.5 text-right text-xs font-semibold uppercase tracking-wide text-navy-500/70 dark:text-navy-100/50">
                   {index === 0 ? "Onde" : connector === "OR" ? "ou" : "e"}
                 </div>
 
@@ -222,7 +222,7 @@ function FilterPanel({
                   type="button"
                   onClick={() => removeCondition(condition.id)}
                   aria-label="Remover condição"
-                  className="mt-1.5 rounded p-1 text-navy-500 hover:bg-navy-100 hover:text-navy-900"
+                  className="mt-1.5 rounded p-1 text-navy-500 hover:bg-navy-100 hover:text-navy-900 dark:text-navy-100/60 dark:hover:bg-navy-800 dark:hover:text-navy-100"
                 >
                   <X size={14} />
                 </button>
@@ -253,8 +253,8 @@ function FilterPanel({
         <Plus size={14} /> Adicionar filtro
       </button>
 
-      <div className="mt-4 flex items-center justify-between gap-3 border-t border-navy-100 pt-3">
-        <p className="text-[11.5px] text-navy-500/80">
+      <div className="mt-4 flex items-center justify-between gap-3 border-t border-navy-100 pt-3 dark:border-navy-700">
+        <p className="text-[11.5px] text-navy-500/80 dark:text-navy-100/50">
           Novos clientes e disponibilidade de flexitank não são afetados pelo filtro.
         </p>
         <div className="flex shrink-0 gap-2">
