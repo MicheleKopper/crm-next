@@ -625,6 +625,13 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
 - Foco: sem outline nativo (`focus:outline-none`), anel de 2px em `navy-500` a 20% de opacidade (`focus:ring-2 focus:ring-navy-500/20`) + borda muda para `navy-500`.
 - **Não há estado de erro visual embutido no próprio Input** — mensagens de erro são renderizadas separadamente (ver §13, `WizardField`).
 
+**`Select` deixou de ser um `<select>` nativo puro — agora é um combobox com busca integrada** (`src/components/ui/select.tsx`), mantendo a API (`{...register(...)}`, `value`/`onChange`, `defaultValue` via `FormData`) e a aparência fechada idênticas à receita acima:
+- Fechado: `<button>` com as mesmas classes de Input/Select + label da opção selecionada (ou "Selecione" em `text-navy-500/60 dark:text-navy-100/40`) + ícone `ChevronDown` (`size={15}`) à direita.
+- Aberto: painel `absolute` abaixo do botão (`rounded-lg border border-navy-100 bg-white shadow-lg dark:border-navy-700 dark:bg-navy-900`) com um campo de busca no topo (ícone `Search` + input sem borda própria, foco automático) e uma lista `role="listbox"` (`max-h-56 overflow-y-auto`) filtrada pelo texto digitado; opção destacada/selecionada em `bg-navy-100 dark:bg-navy-800`; sem resultado mostra "Nenhum resultado encontrado" (`text-navy-500 dark:text-navy-100/50`).
+- Fecha com clique fora, `Escape` ou seleção; navegação por `↑`/`↓`/`Enter`.
+- Por baixo, mantém um `<select>` nativo real oculto (`sr-only`, não `display:none`) recebendo todas as props originais — é isso que preserva `register()` do react-hook-form e a leitura via `FormData` nativo dos formulários que usam `<form action={...}>`, sem precisar mudar nenhum call site.
+- Único `<select>` nativo que ficou de fora dessa troca: o seletor de itens por página em `pagination.tsx` (10/20/50/100) — não usa o componente `Select`, e busca não agrega valor a 4 opções fixas.
+
 ### 7.2 Label
 
 ```

@@ -79,3 +79,48 @@ export const transferFlexitanksSchema = z.object({
   locationId: z.string().uuid("Obrigatório"),
 });
 export type TransferFlexitanksInput = z.output<typeof transferFlexitanksSchema>;
+
+export const createFlexitanksBatchSchema = z.object({
+  purchaseOrderId: z.string().uuid(),
+  items: z
+    .array(
+      z.object({
+        serialPrefix: z.string().trim().min(1, "Obrigatório"),
+        start: z.coerce.number().int().min(0),
+        end: z.coerce.number().int().min(0),
+        fhbStock: z.string().trim().optional(),
+        size: z.enum(FLEXITANK_SIZES),
+        price: z.coerce.number().min(0),
+      })
+    )
+    .min(1, "Adicione ao menos uma faixa."),
+});
+export type CreateFlexitanksBatchInput = z.output<typeof createFlexitanksBatchSchema>;
+
+export const createFlexitanksUniqueSchema = z.object({
+  purchaseOrderId: z.string().uuid(),
+  items: z
+    .array(
+      z.object({
+        serialNumber: z.string().trim().min(1, "Obrigatório"),
+        fhbStock: z.string().trim().optional(),
+        size: z.enum(FLEXITANK_SIZES),
+        price: z.coerce.number().min(0),
+      })
+    )
+    .min(1, "Adicione ao menos um flexitank."),
+});
+export type CreateFlexitanksUniqueInput = z.output<typeof createFlexitanksUniqueSchema>;
+
+export const deleteFlexitanksQuerySchema = z.object({
+  uids: z
+    .string()
+    .transform((value) => value.split(",").filter(Boolean))
+    .pipe(z.array(z.string().uuid()).min(1, "Selecione ao menos um flexitank.")),
+});
+export type DeleteFlexitanksQuery = z.infer<typeof deleteFlexitanksQuerySchema>;
+
+export const setFlexitanksAvailableSchema = z.object({
+  purchaseOrderId: z.string().uuid(),
+});
+export type SetFlexitanksAvailableInput = z.output<typeof setFlexitanksAvailableSchema>;

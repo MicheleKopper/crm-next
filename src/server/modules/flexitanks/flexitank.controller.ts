@@ -5,10 +5,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { toCsv } from "@/lib/csv";
 import { toErrorResponse } from "@/server/shared/errors";
 import {
+  createFlexitanksBatchSchema,
+  createFlexitanksUniqueSchema,
+  deleteFlexitanksQuerySchema,
   exportFlexitanksQuerySchema,
   listFlexitanksQuerySchema,
   markFlexitankDamagedSchema,
   searchTransferQuerySchema,
+  setFlexitanksAvailableSchema,
   transferFlexitanksSchema,
   updateFlexitankSchema,
 } from "./flexitank.dto";
@@ -105,6 +109,48 @@ export async function transferFlexitanks(request: NextRequest) {
   try {
     const input = transferFlexitanksSchema.parse(await request.json());
     const result = await flexitankService.transferFlexitanks(input);
+    return NextResponse.json(result);
+  } catch (error) {
+    return toErrorResponse(error);
+  }
+}
+
+export async function createFlexitanksBatch(request: NextRequest) {
+  try {
+    const input = createFlexitanksBatchSchema.parse(await request.json());
+    const result = await flexitankService.createFlexitanksBatch(input);
+    return NextResponse.json(result, { status: 201 });
+  } catch (error) {
+    return toErrorResponse(error);
+  }
+}
+
+export async function createFlexitanksUnique(request: NextRequest) {
+  try {
+    const input = createFlexitanksUniqueSchema.parse(await request.json());
+    const result = await flexitankService.createFlexitanksUnique(input);
+    return NextResponse.json(result, { status: 201 });
+  } catch (error) {
+    return toErrorResponse(error);
+  }
+}
+
+export async function deleteFlexitanksBatch(request: NextRequest) {
+  try {
+    const query = deleteFlexitanksQuerySchema.parse(queryToObject(request));
+    const result = await flexitankService.deleteFlexitanksBatch(query.uids);
+    return NextResponse.json(result);
+  } catch (error) {
+    return toErrorResponse(error);
+  }
+}
+
+export async function setFlexitanksAvailable(request: NextRequest) {
+  try {
+    const input = setFlexitanksAvailableSchema.parse(await request.json());
+    const result = await flexitankService.setFlexitanksAvailable(
+      input.purchaseOrderId
+    );
     return NextResponse.json(result);
   } catch (error) {
     return toErrorResponse(error);

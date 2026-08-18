@@ -87,6 +87,25 @@ export function FlexitankStatusBadge({ status }: { status: string | null }) {
   );
 }
 
+const PURCHASE_ORDER_STATUS_CLASSES: Record<string, string> = {
+  Completed: "bg-status-ativo/10 text-status-ativo",
+  Expected: "bg-status-warning/10 text-status-warning",
+};
+
+export function PurchaseOrderStatusBadge({ status }: { status: string | null }) {
+  const label = status ?? "Expected";
+  return (
+    <span
+      className={cn(
+        "inline-flex w-fit items-center rounded-full px-2.5 py-1 text-xs font-semibold",
+        PURCHASE_ORDER_STATUS_CLASSES[label] ?? "bg-navy-100 text-navy-500"
+      )}
+    >
+      {label}
+    </span>
+  );
+}
+
 export function FlexitankSizeBadge({ size }: { size: string | null }) {
   if (!size) return null;
   return (

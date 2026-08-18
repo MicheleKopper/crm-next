@@ -16,8 +16,9 @@ model User {
   permissions  Json     @default("{}")
   createdAt    DateTime @default(now()) @map("created_at")
 
-  ownedCompanies Company[] @relation("CompanyOwner")
-  operatedLeads  Lead[]    @relation("LeadOperator")
+  ownedCompanies  Company[]        @relation("CompanyOwner")
+  operatedLeads   Lead[]           @relation("LeadOperator")
+  productsPo      ProductPo[]
   dashboardLayout DashboardLayout?
 
   @@map("users")
@@ -177,19 +178,71 @@ model Product {
   @@map("products")
 }
 
-/// Minimal subset of the legacy `purchase_orders` table — only what Flexitank details need.
 model PurchaseOrder {
   id                  String    @id @default(uuid()) @db.Uuid
-  poNumber            String?   @map("po_number")
+  poNumber            String?   @unique @map("po_number")
+  poDate              DateTime? @map("po_date")
+  /// URL/caminho do arquivo — sem upload real ainda (v1 não inclui integração de armazenamento)
+  poFile              String?   @map("po_file")
+  proformaNumber      String?   @map("proforma_number")
+  proformaDate        DateTime? @map("proforma_date")
+  proformaFile        String?   @map("proforma_file")
+  packingListNumber   String?   @map("packing_list_number")
+  packingListDate     DateTime? @map("packing_list_date")
+  packingListFile     String?   @map("packing_list_file")
+  blNumber            String?   @map("bl_number")
+  blDate              DateTime? @map("bl_date")
+  blFile              String?   @map("bl_file")
   tempAdmissionNumber String?   @map("temp_admission_number")
   tempAdmissionDate   DateTime? @map("temp_admission_date")
+  tempAdmissionFile   String?   @map("temp_admission_file")
+  arrivalDate         DateTime? @map("arrival_date")
+  /// Presença desta data é o que deriva o status "Completed"/"Expected" (nunca armazenado)
   clearenceDate       DateTime? @map("clearence_date")
+  observations        String?
   createdAt           DateTime  @default(now()) @map("created_at")
   updatedAt           DateTime  @updatedAt @map("updated_at")
 
-  flexitanks Flexitank[]
+  flexitanks  Flexitank[]
+  products    ProductPo[]
+  accessories Accessory[]
 
   @@map("purchase_orders")
+}
+
+/// Itens/linhas de produto de uma Purchase Order — `isFlexitank` marca linhas cuja `quantity`
+/// compõe a cota de flexitanks que podem ser cadastrados para a PO.
+model ProductPo {
+  id          String        @id @default(uuid()) @db.Uuid
+  poId        String        @map("po_id") @db.Uuid
+  po          PurchaseOrder @relation(fields: [poId], references: [id], onDelete: Restrict)
+  description String?
+  quantity    Int
+  price       Float?
+  size        String?
+  comments    String?
+  isFlexitank Boolean       @default(false) @map("is_flexitank")
+  userId      String?       @map("user_id") @db.Uuid
+  user        User?         @relation(fields: [userId], references: [id])
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  @@map("products_po")
+}
+
+/// Acessórios vinculados a uma PO. Anti-Bulging Bars são cadastrados em kits (sem `code`
+/// individual); os demais tipos (ex. Heating Pad) recebem um `code` sequencial único por unidade.
+model Accessory {
+  id              String        @id @default(uuid()) @db.Uuid
+  type            String
+  code            String?       @unique
+  quantityKit     Int?          @map("quantity_kit")
+  status          String        @default("Available")
+  purchaseOrderId String        @map("purchase_order_id") @db.Uuid
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
+  createdAt       DateTime      @default(now()) @map("created_at")
+
+  @@map("accessories")
 }
 
 /// Minimal subset of the legacy `shipments` table — only what Flexitank details need.
@@ -263,7 +316,7 @@ model Flexitank {
   locationId      String?        @map("location_id") @db.Uuid
   location        Company?       @relation("FlexitankLocation", fields: [locationId], references: [id])
   purchaseOrderId String?        @map("purchase_order_id") @db.Uuid
-  purchaseOrder   PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrder   PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
   shipmentId      String?        @map("shipment_id") @db.Uuid
   shipment        Shipment?      @relation(fields: [shipmentId], references: [id])
   comment         String?

@@ -4,6 +4,8 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/server/shared/prisma";
 import {
   FLEXITANK_SIZES,
+  type CreateFlexitanksBatchInput,
+  type CreateFlexitanksUniqueInput,
   type ExportFlexitanksQuery,
   type ListFlexitanksQuery,
   type TransferFlexitanksInput,
@@ -222,6 +224,77 @@ export async function transferFlexitanks(input: TransferFlexitanksInput) {
   return prisma.flexitank.updateMany({
     where: { id: { in: input.uids } },
     data: { locationId: input.locationId },
+  });
+}
+
+export async function createFlexitanksBatch(input: CreateFlexitanksBatchInput) {
+  return prisma.$transaction(async (tx) => {
+    let count = 0;
+    for (const item of input.items) {
+      for (let current = item.start; current <= item.end; current++) {
+        await tx.flexitank.create({
+          data: {
+            serialNumber: `${item.serialPrefix}${String(current).padStart(3, "0")}`,
+            fhbStock: item.fhbStock,
+            size: item.size,
+            price: item.price,
+            purchaseOrderId: input.purchaseOrderId,
+            status: "Waiting",
+          },
+        });
+        count++;
+      }
+    }
+    return count;
+  });
+}
+
+export async function createFlexitanksUnique(input: CreateFlexitanksUniqueInput) {
+  await prisma.flexitank.createMany({
+    data: input.items.map((item) => ({
+      serialNumber: item.serialNumber,
+      fhbStock: item.fhbStock,
+      size: item.size,
+      price: item.price,
+      purchaseOrderId: input.purchaseOrderId,
+      status: "Waiting",
+    })),
+  });
+  return input.items.length;
+}
+
+export async function deleteFlexitanksBatch(uids: string[]) {
+  return prisma.flexitank.deleteMany({ where: { id: { in: uids } } });
+}
+
+/** Flexitank quota for a PO: how many are contracted (via `products_po`) vs. already created. */
+export async function getFlexitankQuota(purchaseOrderId: string) {
+  const [productAgg, existing] = await Promise.all([
+    prisma.productPo.aggregate({
+      where: { poId: purchaseOrderId, isFlexitank: true },
+      _sum: { quantity: true },
+    }),
+    prisma.flexitank.count({ where: { purchaseOrderId } }),
+  ]);
+  return { contracted: productAgg._sum.quantity ?? 0, existing };
+}
+
+const DEFAULT_AVAILABLE_LOCATION_LEGAL_NAME = "SIGMA TRANSPORTES E LOGISTICA LTDA";
+
+export async function findDefaultAvailableLocation() {
+  return prisma.company.findFirst({
+    where: { legalName: DEFAULT_AVAILABLE_LOCATION_LEGAL_NAME },
+    select: { id: true },
+  });
+}
+
+export async function markFlexitanksAvailable(
+  purchaseOrderId: string,
+  locationId: string
+) {
+  return prisma.flexitank.updateMany({
+    where: { purchaseOrderId, status: "Waiting" },
+    data: { status: "Available", locationId },
   });
 }
 

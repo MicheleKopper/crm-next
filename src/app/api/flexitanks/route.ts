@@ -5,3 +5,7 @@ import * as flexitankController from "@/server/modules/flexitanks/flexitank.cont
 export async function GET(request: NextRequest) {
   return flexitankController.listFlexitanks(request);
 }
+
+export async function DELETE(request: NextRequest) {
+  return flexitankController.deleteFlexitanksBatch(request);
+}

@@ -16,6 +16,13 @@ const ADMIN_PERMISSIONS = {
   leads_edit: true,
   leads_delete: true,
   flexitanks_edit: true,
+  flexitanks_create: true,
+  flexitanks_delete: true,
+  purchase_orders_create: true,
+  purchase_orders_edit: true,
+  purchase_orders_delete: true,
+  accessories_create: true,
+  accessories_delete: true,
 };
 
 const COMMERCIAL_PERMISSIONS = {
@@ -26,6 +33,13 @@ const COMMERCIAL_PERMISSIONS = {
   leads_edit: true,
   leads_delete: false,
   flexitanks_edit: true,
+  flexitanks_create: true,
+  flexitanks_delete: false,
+  purchase_orders_create: true,
+  purchase_orders_edit: true,
+  purchase_orders_delete: false,
+  accessories_create: true,
+  accessories_delete: false,
 };
 
 type SeedCustomer = {

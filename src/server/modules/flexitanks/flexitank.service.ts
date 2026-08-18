@@ -1,8 +1,10 @@
 import "server-only";
 
 import { requirePermission, requireSession } from "@/server/auth/permissions";
-import { NotFoundError } from "@/server/shared/errors";
+import { ConflictError, NotFoundError } from "@/server/shared/errors";
 import type {
+  CreateFlexitanksBatchInput,
+  CreateFlexitanksUniqueInput,
   ExportFlexitanksQuery,
   ListFlexitanksQuery,
   MarkFlexitankDamagedInput,
@@ -79,6 +81,63 @@ export async function transferFlexitanks(input: TransferFlexitanksInput) {
 
   await flexitankRepository.transferFlexitanks(input);
   return { count: input.uids.length };
+}
+
+function countRequestedRange(items: { start: number; end: number }[]) {
+  return items.reduce((total, item) => total + (item.end - item.start + 1), 0);
+}
+
+async function assertWithinQuota(purchaseOrderId: string, requested: number) {
+  const { contracted, existing } = await flexitankRepository.getFlexitankQuota(
+    purchaseOrderId
+  );
+  if (existing + requested > contracted) {
+    throw new ConflictError("Limite de flexitanks excedido.");
+  }
+}
+
+export async function createFlexitanksBatch(input: CreateFlexitanksBatchInput) {
+  const session = await requireSession();
+  requirePermission(session, "flexitanks_create");
+
+  await assertWithinQuota(input.purchaseOrderId, countRequestedRange(input.items));
+  const count = await flexitankRepository.createFlexitanksBatch(input);
+  return { count };
+}
+
+export async function createFlexitanksUnique(input: CreateFlexitanksUniqueInput) {
+  const session = await requireSession();
+  requirePermission(session, "flexitanks_create");
+
+  await assertWithinQuota(input.purchaseOrderId, input.items.length);
+  const count = await flexitankRepository.createFlexitanksUnique(input);
+  return { count };
+}
+
+export async function deleteFlexitanksBatch(uids: string[]) {
+  const session = await requireSession();
+  requirePermission(session, "flexitanks_delete");
+
+  await flexitankRepository.deleteFlexitanksBatch(uids);
+  return { count: uids.length };
+}
+
+export async function setFlexitanksAvailable(purchaseOrderId: string) {
+  const session = await requireSession();
+  requirePermission(session, "flexitanks_edit");
+
+  const location = await flexitankRepository.findDefaultAvailableLocation();
+  if (!location) {
+    throw new NotFoundError(
+      "Localização padrão para liberação de flexitanks não encontrada."
+    );
+  }
+
+  const result = await flexitankRepository.markFlexitanksAvailable(
+    purchaseOrderId,
+    location.id
+  );
+  return { count: result.count };
 }
 
 export async function exportFlexitanksCsv(query: ExportFlexitanksQuery) {
