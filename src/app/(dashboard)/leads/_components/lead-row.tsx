@@ -7,8 +7,8 @@ import type { LeadListRow } from "@/server/modules/leads/lead.repository";
 function MetaField({ label, value }: { label: string; value: string | null }) {
   return (
     <>
-      <span className="font-semibold text-navy-500">{label}</span>
-      <span className="truncate text-navy-800" title={value ?? undefined}>
+      <span className="font-semibold text-navy-500 dark:text-navy-100/70">{label}</span>
+      <span className="truncate text-navy-800 dark:text-navy-100" title={value ?? undefined}>
         {value || "—"}
       </span>
     </>
@@ -17,19 +17,19 @@ function MetaField({ label, value }: { label: string; value: string | null }) {
 
 export function LeadRow({ lead }: { lead: LeadListRow }) {
   return (
-    <div className="grid grid-cols-[104px_2fr_1.5fr_1.5fr_auto] items-start gap-4 rounded-lg border-b border-navy-100 py-4 px-2 -mx-2 last:border-b-0 hover:bg-navy-50">
+    <div className="grid grid-cols-[104px_2fr_1.5fr_1.5fr_auto] items-start gap-4 rounded-lg border-b border-navy-100 py-4 px-2 -mx-2 last:border-b-0 hover:bg-navy-50 dark:border-navy-700 dark:hover:bg-navy-800">
       <LeadStatusBadge status={lead.status} />
 
       <div className="min-w-0 space-y-1 text-sm">
         <p className="truncate" title={lead.contactName ?? undefined}>
-          <span className="font-semibold text-navy-500">Lead</span>{" "}
-          <span className="font-semibold text-navy-900">
+          <span className="font-semibold text-navy-500 dark:text-navy-100/70">Lead</span>{" "}
+          <span className="font-semibold text-navy-900 dark:text-navy-100">
             {lead.contactName || "—"}
           </span>
         </p>
         <p className="truncate" title={lead.displayName}>
-          <span className="font-semibold text-navy-500">Empresa</span>{" "}
-          <span className="text-navy-800">{lead.displayName}</span>
+          <span className="font-semibold text-navy-500 dark:text-navy-100/70">Empresa</span>{" "}
+          <span className="text-navy-800 dark:text-navy-100">{lead.displayName}</span>
         </p>
       </div>
 
@@ -53,7 +53,7 @@ export function LeadRow({ lead }: { lead: LeadListRow }) {
       <Link
         href={`/leads/${lead.uid}`}
         aria-label={`Ver detalhes de ${lead.contactName || lead.displayName}`}
-        className="rounded-full p-2 text-navy-700 hover:bg-navy-100"
+        className="rounded-full p-2 text-navy-700 hover:bg-navy-100 dark:text-navy-100 dark:hover:bg-navy-800"
       >
         <ChevronRight size={20} />
       </Link>

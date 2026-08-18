@@ -25,14 +25,14 @@ const STATUS_CLASSES: Record<string, string> = {
 export function OpportunitiesTab() {
   if (MOCK_OPPORTUNITIES.length === 0) {
     return (
-      <p className="py-12 text-center text-navy-500">
+      <p className="py-12 text-center text-navy-500 dark:text-navy-100/70">
         Nenhuma oportunidade cadastrada.
       </p>
     );
   }
 
   return (
-    <ul className="divide-y divide-navy-100">
+    <ul className="divide-y divide-navy-100 dark:divide-navy-700">
       {MOCK_OPPORTUNITIES.map((opportunity, index) => (
         <li
           key={index}
@@ -41,23 +41,23 @@ export function OpportunitiesTab() {
           <span
             className={cn(
               "inline-flex w-fit items-center rounded-full px-2.5 py-1 text-xs font-semibold",
-              STATUS_CLASSES[opportunity.status] ?? "bg-navy-100 text-navy-500"
+              STATUS_CLASSES[opportunity.status] ?? "bg-navy-100 text-navy-500 dark:bg-navy-800/60 dark:text-navy-100/70"
             )}
           >
             {opportunity.status}
           </span>
 
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-navy-900">
+            <p className="truncate text-sm font-semibold text-navy-900 dark:text-navy-100">
               {opportunity.title}
             </p>
-            <p className="mt-0.5 truncate text-xs text-navy-500">
+            <p className="mt-0.5 truncate text-xs text-navy-500 dark:text-navy-100/70">
               {opportunity.service}
             </p>
           </div>
 
-          <p className="hidden items-center gap-1.5 truncate text-sm text-navy-700 sm:flex">
-            <User size={14} className="shrink-0 text-navy-400" />
+          <p className="hidden items-center gap-1.5 truncate text-sm text-navy-700 dark:text-navy-100 sm:flex">
+            <User size={14} className="shrink-0 text-navy-400 dark:text-navy-100/40" />
             {opportunity.operatorFullName}
           </p>
 
@@ -65,7 +65,7 @@ export function OpportunitiesTab() {
             type="button"
             aria-label={`Ver detalhes de ${opportunity.title}`}
             title="Ver detalhes"
-            className="rounded-lg p-2 text-navy-500 hover:bg-navy-100 hover:text-navy-900"
+            className="rounded-lg p-2 text-navy-500 hover:bg-navy-100 hover:text-navy-900 dark:text-navy-100/70 dark:hover:bg-navy-800 dark:hover:text-navy-100"
           >
             <ChevronRight size={16} />
           </button>

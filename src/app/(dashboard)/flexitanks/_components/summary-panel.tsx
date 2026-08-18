@@ -59,35 +59,35 @@ export function SummaryPanel({
   if (counterRows.length === 0) return null;
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-navy-100">
+    <div className="overflow-x-auto rounded-xl border border-navy-100 dark:border-navy-700">
       <table className="w-full text-left text-sm">
         <thead>
-          <tr className="border-b border-navy-100 bg-navy-50">
-            <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-navy-400">
+          <tr className="border-b border-navy-100 bg-navy-50 dark:border-navy-700 dark:bg-navy-800/60">
+            <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-navy-400 dark:text-navy-100/40">
               Porto
             </th>
-            <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-navy-400">
+            <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-navy-400 dark:text-navy-100/40">
               Empresa
             </th>
             {visibleSizes.map((size) => (
               <th
                 key={size}
-                className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wide text-navy-400"
+                className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wide text-navy-400 dark:text-navy-100/40"
               >
                 {size}
               </th>
             ))}
-            <th className="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-navy-400">
+            <th className="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-navy-400 dark:text-navy-100/40">
               Total
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-navy-100">
+        <tbody className="divide-y divide-navy-100 dark:divide-navy-700">
           {visibleRows.length === 0 ? (
             <tr>
               <td
                 colSpan={visibleSizes.length + 3}
-                className="px-5 py-6 text-center text-sm text-navy-400"
+                className="px-5 py-6 text-center text-sm text-navy-400 dark:text-navy-100/40"
               >
                 Nenhum item visível. Ajuste as opções de exibição.
               </td>
@@ -96,21 +96,21 @@ export function SummaryPanel({
             visibleRows.map((row) => (
               <tr
                 key={`${row.portName}-${row.companyName}`}
-                className="hover:bg-navy-50/60"
+                className="hover:bg-navy-50/60 dark:hover:bg-navy-800/60"
               >
-                <td className="px-5 py-3 text-navy-900">
+                <td className="px-5 py-3 text-navy-900 dark:text-navy-100">
                   <span className="flex items-center gap-2">
-                    <MapPin size={14} className="text-navy-400" />
+                    <MapPin size={14} className="text-navy-400 dark:text-navy-100/40" />
                     {formatPortName(row.portName)}
                   </span>
                 </td>
-                <td className="px-5 py-3 text-navy-700">{row.companyName}</td>
+                <td className="px-5 py-3 text-navy-700 dark:text-navy-100">{row.companyName}</td>
                 {visibleSizes.map((size) => (
-                  <td key={size} className="px-3 py-3 text-center text-navy-700">
+                  <td key={size} className="px-3 py-3 text-center text-navy-700 dark:text-navy-100">
                     {row.counts[size]}
                   </td>
                 ))}
-                <td className="px-5 py-3 text-center font-semibold text-navy-900">
+                <td className="px-5 py-3 text-center font-semibold text-navy-900 dark:text-navy-100">
                   {rowTotal(row)}
                 </td>
               </tr>
@@ -119,16 +119,16 @@ export function SummaryPanel({
         </tbody>
         {visibleRows.length > 0 && (
           <tfoot>
-            <tr className="border-t border-navy-100 bg-navy-100/60 font-semibold">
-              <td className="px-5 py-3 text-navy-900" colSpan={2}>
+            <tr className="border-t border-navy-100 bg-navy-100/60 font-semibold dark:border-navy-700 dark:bg-navy-800/60">
+              <td className="px-5 py-3 text-navy-900 dark:text-navy-100" colSpan={2}>
                 Total geral
               </td>
               {visibleSizes.map((size) => (
-                <td key={size} className="px-3 py-3 text-center text-navy-900">
+                <td key={size} className="px-3 py-3 text-center text-navy-900 dark:text-navy-100">
                   {grandTotals[size]}
                 </td>
               ))}
-              <td className="px-5 py-3 text-center text-navy-900">
+              <td className="px-5 py-3 text-center text-navy-900 dark:text-navy-100">
                 {grandTotal}
               </td>
             </tr>

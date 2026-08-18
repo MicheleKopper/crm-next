@@ -30,8 +30,8 @@ export function LeadDetailTabs({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl bg-white shadow-sm">
-        <nav className="flex gap-8 border-b border-navy-100 px-6">
+      <div className="rounded-xl bg-white shadow-sm dark:bg-navy-900">
+        <nav className="flex gap-8 border-b border-navy-100 px-6 dark:border-navy-700">
           {TABS.map((item) => (
             <button
               key={item}
@@ -40,8 +40,8 @@ export function LeadDetailTabs({
               className={cn(
                 "border-b-2 py-4 text-sm font-semibold transition-colors",
                 tab === item
-                  ? "border-navy-900 text-navy-900"
-                  : "border-transparent text-navy-500 hover:text-navy-900"
+                  ? "border-navy-900 text-navy-900 dark:border-navy-100 dark:text-navy-100"
+                  : "border-transparent text-navy-500 hover:text-navy-900 dark:text-navy-100/70 dark:hover:text-navy-100"
               )}
             >
               {item}

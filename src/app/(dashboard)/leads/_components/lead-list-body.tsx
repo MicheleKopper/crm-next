@@ -11,7 +11,7 @@ export function LeadListBody({ items }: { items: LeadListRow[] }) {
 
   if (items.length === 0) {
     return (
-      <p className="py-12 text-center text-navy-500">Nenhum lead cadastrado.</p>
+      <p className="py-12 text-center text-navy-500 dark:text-navy-100/70">Nenhum lead cadastrado.</p>
     );
   }
 

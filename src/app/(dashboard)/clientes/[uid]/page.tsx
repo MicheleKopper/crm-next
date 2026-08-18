@@ -39,7 +39,7 @@ export default async function CustomerDetailPage({
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-navy-500">
+      <p className="text-sm text-navy-500 dark:text-navy-100/70">
         <Link href="/clientes" className="hover:underline">
           Clientes
         </Link>{" "}
@@ -52,7 +52,7 @@ export default async function CustomerDetailPage({
             {getInitials(customer.displayName)}
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-navy-900">
+            <h1 className="text-2xl font-bold text-navy-900 dark:text-navy-100">
               {customer.displayName}
             </h1>
             <div className="mt-1">
@@ -79,7 +79,7 @@ export default async function CustomerDetailPage({
 
       <Link
         href="/clientes"
-        className="inline-block text-sm font-medium text-navy-500 hover:text-navy-900 hover:underline"
+        className="inline-block text-sm font-medium text-navy-500 hover:text-navy-900 hover:underline dark:text-navy-100/70 dark:hover:text-navy-100"
       >
         ← Voltar para a lista
       </Link>

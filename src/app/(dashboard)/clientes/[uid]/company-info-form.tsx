@@ -83,7 +83,7 @@ export function CompanyInfoForm({
           id="isForeignCompany"
           type="checkbox"
           {...register("isForeignCompany")}
-          className="h-4 w-4 rounded border-navy-100"
+          className="h-4 w-4 rounded border-navy-100 dark:border-navy-700"
         />
         <Label htmlFor="isForeignCompany" className="mb-0">
           Empresa estrangeira

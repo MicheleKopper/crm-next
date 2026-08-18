@@ -57,7 +57,7 @@ export function DamagedModal({
 
   return (
     <Modal open={open} onClose={handleClose} title='Alterar status para "danificado"?'>
-      <p className="text-sm text-navy-700">
+      <p className="text-sm text-navy-700 dark:text-navy-100">
         Ao confirmar, o flexitank será marcado como{" "}
         <strong>danificado</strong> e os dados relacionados serão atualizados.
       </p>

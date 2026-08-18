@@ -85,12 +85,12 @@ export function ScorePicker({
         <ScoreBadge score={score} />
         <ChevronDown
           size={13}
-          className="text-navy-400 group-hover:text-navy-700"
+          className="text-navy-400 group-hover:text-navy-700 dark:text-navy-100/40 dark:group-hover:text-navy-100"
         />
       </button>
 
       {open && (
-        <div className="absolute left-0 top-[calc(100%+0.375rem)] z-20 w-44 rounded-lg border border-navy-100 bg-white p-3 shadow-lg">
+        <div className="absolute left-0 top-[calc(100%+0.375rem)] z-20 w-44 rounded-lg border border-navy-100 bg-white p-3 shadow-lg dark:border-navy-700 dark:bg-navy-900">
           <Input
             type="number"
             min={1}

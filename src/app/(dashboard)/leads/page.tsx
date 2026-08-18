@@ -37,8 +37,8 @@ export default async function LeadsPage({
       <div className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-navy-900">Leads</h1>
-            <p className="text-sm text-navy-500">
+            <h1 className="text-2xl font-bold text-navy-900 dark:text-navy-100">Leads</h1>
+            <p className="text-sm text-navy-500 dark:text-navy-100/70">
               <Link href="/leads" className="hover:underline">
                 Home
               </Link>{" "}
@@ -72,7 +72,7 @@ export default async function LeadsPage({
           </div>
         </div>
 
-        <div className="rounded-xl bg-white p-6 shadow-sm">
+        <div className="rounded-xl bg-white p-6 shadow-sm dark:bg-navy-900">
           <LeadListBody items={items} />
 
           {items.length > 0 && !query.search && (

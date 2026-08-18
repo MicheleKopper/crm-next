@@ -93,21 +93,21 @@ export function FlexitankExportMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-[calc(100%+0.375rem)] z-20 w-64 overflow-hidden rounded-lg border border-navy-100 bg-white py-1 shadow-lg"
+          className="absolute right-0 top-[calc(100%+0.375rem)] z-20 w-64 overflow-hidden rounded-lg border border-navy-100 bg-white py-1 shadow-lg dark:border-navy-700 dark:bg-navy-900"
         >
           <button
             type="button"
             role="menuitem"
             onClick={() => handleExport("available")}
             disabled={loading !== null}
-            className="flex w-full items-start gap-2 px-3 py-2 text-left hover:bg-navy-50 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-start gap-2 px-3 py-2 text-left hover:bg-navy-50 disabled:cursor-not-allowed disabled:opacity-60 dark:hover:bg-navy-800"
           >
             <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-status-ativo" />
             <span>
-              <span className="block text-sm font-medium text-navy-900">
+              <span className="block text-sm font-medium text-navy-900 dark:text-navy-100">
                 Exportar disponíveis
               </span>
-              <span className="block text-xs text-navy-400">
+              <span className="block text-xs text-navy-400 dark:text-navy-100/40">
                 Todos os itens com status Available
               </span>
             </span>
@@ -117,14 +117,14 @@ export function FlexitankExportMenu() {
             role="menuitem"
             onClick={() => handleExport("current")}
             disabled={loading !== null}
-            className="flex w-full items-start gap-2 px-3 py-2 text-left hover:bg-navy-50 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-start gap-2 px-3 py-2 text-left hover:bg-navy-50 disabled:cursor-not-allowed disabled:opacity-60 dark:hover:bg-navy-800"
           >
             <ListFilter size={14} className="mt-0.5 shrink-0 text-status-lead" />
             <span>
-              <span className="block text-sm font-medium text-navy-900">
+              <span className="block text-sm font-medium text-navy-900 dark:text-navy-100">
                 Exportar listagem atual
               </span>
-              <span className="block text-xs text-navy-400">
+              <span className="block text-xs text-navy-400 dark:text-navy-100/40">
                 Itens exibidos com os filtros e pesquisa aplicados
               </span>
             </span>

@@ -12,11 +12,11 @@ export function FlexitankTableView({ items }: { items: FlexitankListRow[] }) {
     <div className="overflow-x-auto">
       <table className="w-full text-left text-sm">
         <thead>
-          <tr className="border-b border-navy-100">
+          <tr className="border-b border-navy-100 dark:border-navy-700">
             {COLUMNS.map((column) => (
               <th
                 key={column}
-                className="whitespace-nowrap py-2 pr-4 text-xs font-semibold uppercase tracking-wide text-navy-400"
+                className="whitespace-nowrap py-2 pr-4 text-xs font-semibold uppercase tracking-wide text-navy-400 dark:text-navy-100/40"
               >
                 {column}
               </th>
@@ -24,13 +24,13 @@ export function FlexitankTableView({ items }: { items: FlexitankListRow[] }) {
             <th className="py-2 pl-4" />
           </tr>
         </thead>
-        <tbody className="divide-y divide-navy-100">
+        <tbody className="divide-y divide-navy-100 dark:divide-navy-700">
           {items.map((flexitank) => (
-            <tr key={flexitank.uid} className="hover:bg-navy-50">
+            <tr key={flexitank.uid} className="hover:bg-navy-50 dark:hover:bg-navy-800">
               <td className="py-3 pr-4">
                 <FlexitankStatusBadge status={flexitank.status} />
               </td>
-              <td className="max-w-[180px] py-3 pr-4 font-semibold text-navy-900">
+              <td className="max-w-[180px] py-3 pr-4 font-semibold text-navy-900 dark:text-navy-100">
                 <span
                   className="group flex items-center gap-1"
                   title={flexitank.serialNumber}
@@ -39,7 +39,7 @@ export function FlexitankTableView({ items }: { items: FlexitankListRow[] }) {
                   <CopyButton value={flexitank.serialNumber} label="número de série" />
                 </span>
               </td>
-              <td className="max-w-[140px] py-3 pr-4 text-navy-700">
+              <td className="max-w-[140px] py-3 pr-4 text-navy-700 dark:text-navy-100">
                 {flexitank.poNumber ? (
                   <span
                     className="group flex items-center gap-1"
@@ -53,7 +53,7 @@ export function FlexitankTableView({ items }: { items: FlexitankListRow[] }) {
                 )}
               </td>
               <td
-                className="max-w-[160px] truncate py-3 pr-4 text-navy-700"
+                className="max-w-[160px] truncate py-3 pr-4 text-navy-700 dark:text-navy-100"
                 title={flexitank.locationName ?? undefined}
               >
                 {flexitank.locationName || "—"}
@@ -61,7 +61,7 @@ export function FlexitankTableView({ items }: { items: FlexitankListRow[] }) {
               <td className="whitespace-nowrap py-3 pr-4">
                 <FlexitankSizeBadge size={flexitank.size} />
               </td>
-              <td className="whitespace-nowrap py-3 pr-4 font-medium text-navy-900">
+              <td className="whitespace-nowrap py-3 pr-4 font-medium text-navy-900 dark:text-navy-100">
                 {flexitank.price.toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",
@@ -71,7 +71,7 @@ export function FlexitankTableView({ items }: { items: FlexitankListRow[] }) {
                 <Link
                   href={`/flexitanks/${flexitank.uid}`}
                   aria-label={`Ver detalhes de ${flexitank.serialNumber}`}
-                  className="inline-flex rounded-full p-2 text-navy-700 hover:bg-navy-100"
+                  className="inline-flex rounded-full p-2 text-navy-700 hover:bg-navy-100 dark:text-navy-100 dark:hover:bg-navy-800"
                 >
                   <ChevronRight size={18} />
                 </Link>

@@ -34,7 +34,7 @@ function FilterChip({
         "rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
         active
           ? "border-status-lead/30 bg-status-lead/10 text-status-lead hover:bg-status-lead/15"
-          : "border-navy-100 bg-white text-navy-400 line-through hover:border-navy-200 hover:text-navy-500"
+          : "border-navy-100 bg-white text-navy-400 line-through hover:border-navy-200 hover:text-navy-500 dark:border-navy-700 dark:bg-navy-900 dark:text-navy-100/40 dark:hover:text-navy-100/70"
       )}
     >
       {label}
@@ -59,7 +59,7 @@ function FilterSection({
 }) {
   if (items.length === 0) return null;
   return (
-    <div className="border-b border-navy-100 pb-3 last:border-b-0 last:pb-0">
+    <div className="border-b border-navy-100 pb-3 last:border-b-0 last:pb-0 dark:border-navy-700">
       <div className="mb-1.5 flex items-center gap-2">
         <span
           className={cn(
@@ -69,7 +69,7 @@ function FilterSection({
         >
           <Icon size={14} />
         </span>
-        <p className="text-xs font-semibold uppercase tracking-wide text-navy-500">
+        <p className="text-xs font-semibold uppercase tracking-wide text-navy-500 dark:text-navy-100/70">
           {title}
         </p>
       </div>
@@ -134,9 +134,9 @@ export function SummarySection({
   }
 
   return (
-    <div className="rounded-xl bg-white p-6 shadow-sm">
+    <div className="rounded-xl bg-white p-6 shadow-sm dark:bg-navy-900">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold text-navy-900">Inventário</h2>
+        <h2 className="text-sm font-bold text-navy-900 dark:text-navy-100">Inventário</h2>
 
         <div className="flex items-center gap-1">
           <div ref={filtersRef} className="relative">
@@ -145,7 +145,7 @@ export function SummarySection({
               onClick={() => setFiltersOpen((value) => !value)}
               aria-expanded={filtersOpen}
               aria-label="Filtrar inventário"
-              className="relative rounded-full p-1.5 text-navy-400 hover:bg-navy-100 hover:text-navy-900"
+              className="relative rounded-full p-1.5 text-navy-400 hover:bg-navy-100 hover:text-navy-900 dark:text-navy-100/40 dark:hover:bg-navy-800 dark:hover:text-navy-100"
             >
               <SlidersHorizontal size={16} />
               {activeFilterCount > 0 && (
@@ -156,14 +156,14 @@ export function SummarySection({
             </button>
 
             {filtersOpen && (
-              <div className="absolute right-0 top-full z-20 mt-2 w-[min(20rem,90vw)] rounded-xl border border-navy-100 bg-white shadow-lg">
-                <div className="flex items-center justify-between border-b border-navy-100 px-4 py-2.5">
-                  <p className="text-sm font-bold text-navy-900">Filtrar inventário</p>
+              <div className="absolute right-0 top-full z-20 mt-2 w-[min(20rem,90vw)] rounded-xl border border-navy-100 bg-white shadow-lg dark:border-navy-700 dark:bg-navy-900">
+                <div className="flex items-center justify-between border-b border-navy-100 px-4 py-2.5 dark:border-navy-700">
+                  <p className="text-sm font-bold text-navy-900 dark:text-navy-100">Filtrar inventário</p>
                   <button
                     type="button"
                     onClick={() => setFiltersOpen(false)}
                     aria-label="Fechar"
-                    className="rounded-full p-1 text-navy-400 hover:bg-navy-50 hover:text-navy-900"
+                    className="rounded-full p-1 text-navy-400 hover:bg-navy-50 hover:text-navy-900 dark:text-navy-100/40 dark:hover:bg-navy-800 dark:hover:text-navy-100"
                   >
                     <X size={14} />
                   </button>
@@ -202,8 +202,8 @@ export function SummarySection({
                   />
                 </div>
 
-                <div className="flex items-center justify-between border-t border-navy-100 px-4 py-2.5">
-                  <span className="text-xs text-navy-400">
+                <div className="flex items-center justify-between border-t border-navy-100 px-4 py-2.5 dark:border-navy-700">
+                  <span className="text-xs text-navy-400 dark:text-navy-100/40">
                     {activeFilterCount > 0
                       ? `${activeFilterCount} oculto${activeFilterCount > 1 ? "s" : ""}`
                       : "Exibindo tudo"}
@@ -226,7 +226,7 @@ export function SummarySection({
             onClick={() => setOpen((value) => !value)}
             aria-expanded={open}
             aria-label={open ? "Recolher resumo" : "Expandir resumo"}
-            className="rounded-full p-1.5 text-navy-400 hover:bg-navy-100 hover:text-navy-900"
+            className="rounded-full p-1.5 text-navy-400 hover:bg-navy-100 hover:text-navy-900 dark:text-navy-100/40 dark:hover:bg-navy-800 dark:hover:text-navy-100"
           >
             <ChevronDown
               size={16}

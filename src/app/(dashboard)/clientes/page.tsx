@@ -40,8 +40,8 @@ export default async function CustomersPage({
       <div className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-navy-900">Clientes</h1>
-            <p className="text-sm text-navy-500">
+            <h1 className="text-2xl font-bold text-navy-900 dark:text-navy-100">Clientes</h1>
+            <p className="text-sm text-navy-500 dark:text-navy-100/70">
               <Link href="/clientes" className="hover:underline">
                 Home
               </Link>{" "}
@@ -75,7 +75,7 @@ export default async function CustomersPage({
           </div>
         </div>
 
-        <div className="rounded-xl bg-white p-6 shadow-sm">
+        <div className="rounded-xl bg-white p-6 shadow-sm dark:bg-navy-900">
           <CustomerListBody items={items} />
 
           {items.length > 0 && !query.search && (

@@ -40,7 +40,7 @@ export function LeadActionsMenu({
         aria-haspopup="menu"
         aria-expanded={open}
         title="Ações"
-        className="flex h-9 w-9 items-center justify-center rounded-lg border border-navy-100 bg-white text-navy-500 hover:bg-navy-100 hover:text-navy-900"
+        className="flex h-9 w-9 items-center justify-center rounded-lg border border-navy-100 bg-white text-navy-500 hover:bg-navy-100 hover:text-navy-900 dark:border-navy-700 dark:bg-navy-900 dark:text-navy-100/70 dark:hover:bg-navy-800 dark:hover:text-navy-100"
       >
         <MoreVertical size={18} />
       </button>
@@ -48,13 +48,13 @@ export function LeadActionsMenu({
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-[calc(100%+0.375rem)] z-20 w-52 overflow-hidden rounded-lg border border-navy-100 bg-white py-1 shadow-lg"
+          className="absolute right-0 top-[calc(100%+0.375rem)] z-20 w-52 overflow-hidden rounded-lg border border-navy-100 bg-white py-1 shadow-lg dark:border-navy-700 dark:bg-navy-900"
         >
           <button
             type="button"
             role="menuitem"
             onClick={() => setOpen(false)}
-            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-navy-700 hover:bg-navy-50"
+            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-navy-700 hover:bg-navy-50 dark:text-navy-100 dark:hover:bg-navy-800"
           >
             <Target size={14} />
             Add Oportunidade
@@ -63,7 +63,7 @@ export function LeadActionsMenu({
             type="button"
             role="menuitem"
             onClick={() => setOpen(false)}
-            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-navy-700 hover:bg-navy-50"
+            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-navy-700 hover:bg-navy-50 dark:text-navy-100 dark:hover:bg-navy-800"
           >
             <CalendarPlus size={14} />
             Add Atividade
@@ -71,7 +71,7 @@ export function LeadActionsMenu({
 
           {canDelete && (
             <>
-              <div className="my-1 border-t border-navy-100" />
+              <div className="my-1 border-t border-navy-100 dark:border-navy-700" />
               <button
                 type="button"
                 role="menuitem"

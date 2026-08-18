@@ -47,7 +47,7 @@ export default async function LeadDetailPage({
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-navy-500">
+      <p className="text-sm text-navy-500 dark:text-navy-100/70">
         <Link href="/leads" className="hover:underline">
           Leads
         </Link>{" "}
@@ -60,10 +60,10 @@ export default async function LeadDetailPage({
             {getInitials(leadFullName)}
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-navy-900">
+            <h1 className="text-2xl font-bold text-navy-900 dark:text-navy-100">
               {leadFullName}
             </h1>
-            <p className="mt-1 text-sm text-navy-500">
+            <p className="mt-1 text-sm text-navy-500 dark:text-navy-100/70">
               {lead.displayName}
               {jobTitle ? ` · ${jobTitle}` : ""}
             </p>
@@ -104,7 +104,7 @@ export default async function LeadDetailPage({
 
       <Link
         href="/leads"
-        className="inline-block text-sm font-medium text-navy-500 hover:text-navy-900 hover:underline"
+        className="inline-block text-sm font-medium text-navy-500 hover:text-navy-900 hover:underline dark:text-navy-100/70 dark:hover:text-navy-100"
       >
         ← Voltar para a lista
       </Link>

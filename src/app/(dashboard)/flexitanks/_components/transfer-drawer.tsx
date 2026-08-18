@@ -160,8 +160,8 @@ export function TransferDrawer({
           </div>
 
           {selected.length > 0 && (
-            <p className="text-sm text-navy-500">
-              <span className="font-semibold text-navy-900">
+            <p className="text-sm text-navy-500 dark:text-navy-100/70">
+              <span className="font-semibold text-navy-900 dark:text-navy-100">
                 {selected.length}
               </span>{" "}
               selecionado(s)
@@ -169,7 +169,7 @@ export function TransferDrawer({
           )}
 
           {results.length === 0 ? (
-            <p className="py-8 text-center text-navy-500">
+            <p className="py-8 text-center text-navy-500 dark:text-navy-100/70">
               {search.trim()
                 ? "Nenhum flexitank localizado."
                 : "Digite para buscar um flexitank."}
@@ -179,19 +179,19 @@ export function TransferDrawer({
               {results.map((result) => (
                 <label
                   key={result.uid}
-                  className="flex cursor-pointer items-center gap-3 rounded-lg border border-navy-100 px-3 py-2 hover:bg-navy-50"
+                  className="flex cursor-pointer items-center gap-3 rounded-lg border border-navy-100 px-3 py-2 hover:bg-navy-50 dark:border-navy-700 dark:hover:bg-navy-800"
                 >
                   <input
                     type="checkbox"
                     checked={selected.includes(result.uid)}
                     onChange={() => toggle(result.uid)}
-                    className="h-4 w-4 rounded border-navy-100"
+                    className="h-4 w-4 rounded border-navy-100 dark:border-navy-700"
                   />
                   <div className="min-w-0 flex-1 text-sm">
-                    <p className="font-semibold text-navy-900">
+                    <p className="font-semibold text-navy-900 dark:text-navy-100">
                       {result.serialNumber}
                     </p>
-                    <p className="truncate text-navy-500">
+                    <p className="truncate text-navy-500 dark:text-navy-100/70">
                       {result.poNumber || "—"} · {result.companyName || "—"} ·{" "}
                       {result.size}
                     </p>

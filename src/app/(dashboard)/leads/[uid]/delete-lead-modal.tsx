@@ -44,7 +44,7 @@ export function DeleteLeadModal({
 
   return (
     <Modal open={open} onClose={onClose} title="Excluir lead">
-      <p className="text-sm text-navy-700">
+      <p className="text-sm text-navy-700 dark:text-navy-100">
         Tem certeza que deseja excluir <strong>{displayName}</strong>? Essa
         ação não pode ser desfeita.
       </p>

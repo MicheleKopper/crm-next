@@ -11,7 +11,7 @@ export function FlexitankListBody({ items }: { items: FlexitankListRow[] }) {
 
   if (items.length === 0) {
     return (
-      <p className="py-12 text-center text-navy-500">
+      <p className="py-12 text-center text-navy-500 dark:text-navy-100/70">
         Nenhum flexitank localizado.
       </p>
     );

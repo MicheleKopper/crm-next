@@ -1139,9 +1139,8 @@ Esse par (`text-navy-100` sobre `bg-navy-900`) é **o mesmo par que a sidebar j�
 
 ### 18.3 Componentes afetados
 
-- **Cobertura completa**: menu do usuário/sidebar (já eram escuros por padrão), todos os componentes de `src/components/ui/*`, `src/components/list/*`, e 100% do Dashboard (cards, KPIs, gráficos, donut, filtro, modo de personalização).
-- **Casos especiais**: gráficos recharts (cores via JS, não CSS — usam `useTheme()` para escolher entre conjuntos de cor `LIGHT_*`/`DARK_*`); séries de gráfico que eram navy-900 (invisíveis num card escuro) ganharam uma versão clareada só para o tema escuro (ver §9.2/9.3); SVG do donut usa uma cor de trilho calculada em JS (`#eef1f4` claro / `#28324a` escuro).
-- **Sem cobertura ainda**: páginas fora do dashboard (Clientes, Leads, Flexitanks etc.) herdam o que vem dos componentes compartilhados (botões, inputs, sidebar), mas os cards/listagens específicos de cada página (`rounded-xl bg-white p-6 shadow-sm`) ainda não têm classes `dark:` — ficam brancos mesmo com o tema escuro ativo.
+- **Cobertura completa**: menu do usuário/sidebar (já eram escuros por padrão), todos os componentes de `src/components/ui/*`, `src/components/list/*`, 100% do Dashboard (cards, KPIs, gráficos, donut, filtro, modo de personalização), a tela de login, e as três áreas de produto implementadas — Clientes, Leads e Flexitanks (listagem em cards, listagem em tabela, páginas de detalhe, drawers de criação, modais de filtro/exclusão, pickers de status/urgência/score). As demais entradas do menu (Contatos, Oportunidades, Pricing, Embarques, Financeiro, Registros, Configurações) não têm página implementada — não há o que aplicar tema nelas ainda.
+- **Casos especiais**: gráficos recharts (cores via JS, não CSS — usam `useTheme()` para escolher entre conjuntos de cor `LIGHT_*`/`DARK_*`); séries de gráfico que eram navy-900 (invisíveis num card escuro) ganharam uma versão clareada só para o tema escuro (ver §9.2/9.3); SVG do donut usa uma cor de trilho calculada em JS (`#eef1f4` claro / `#28324a` escuro); a barra de destaque `border-l-4 border-navy-900` nos cabeçalhos de seção de página de detalhe (§5.3) precisou de `dark:border-navy-100` — sem isso ela some por ficar da mesma cor do card escuro atrás dela.
 
 ### 18.4 Persistência e comportamento
 

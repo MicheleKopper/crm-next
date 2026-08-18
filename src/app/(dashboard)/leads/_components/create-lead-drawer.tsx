@@ -232,7 +232,7 @@ export function CreateLeadDrawer({
                     {...register("taxId")}
                   />
                   {checkingCnpj && (
-                    <p className="mt-1 text-xs text-navy-500">Buscando empresa...</p>
+                    <p className="mt-1 text-xs text-navy-500 dark:text-navy-100/70">Buscando empresa...</p>
                   )}
                   {isLinkedToExistingCompany && (
                     <p className="mt-1 text-xs text-status-ativo">
